@@ -1,0 +1,1925 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Dashboard de Contenido — Adrián Miller</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    /* superficie — negro cálido */
+    --bg:#080602;
+    --bg-2:#0C0904;
+    --surface:linear-gradient(158deg, rgba(255,240,200,.045) 0%, rgba(255,240,200,.014) 55%, rgba(255,240,200,.006) 100%);
+    --surface-2:linear-gradient(158deg, rgba(255,240,200,.030) 0%, rgba(255,240,200,.007) 100%);
+    --inset:#0B0803;
+    --border:rgba(251,191,36,.14);
+    --border-str:rgba(251,191,36,.34);
+
+    /* oro / ámbar */
+    --v1:#FEF3C7;
+    --v2:#FDE68A;
+    --v3:#FCD34D;
+    --v4:#FBBF24;
+    --v5:#D97706;
+    --violet:#FBBF24;
+    --grad:linear-gradient(120deg,#E8940C 0%,#FBBF24 45%,#FEE9A8 100%);
+    --grad-h:linear-gradient(90deg,#E8940C 0%,#FBBF24 50%,#FEE9A8 100%);
+    --grad-v:linear-gradient(180deg,#FEE9A8 0%,#FBBF24 62%,rgba(180,83,9,.20) 100%);
+    --grad-soft:linear-gradient(135deg, rgba(251,191,36,.15) 0%, rgba(253,230,138,.06) 100%);
+    --glow:0 0 24px rgba(251,191,36,.34);
+    --on-gold:#170F02;
+
+    /* verde — resultados y datos */
+    --g1:#A7F3D0;
+    --g2:#6EE7B7;
+    --g3:#34D399;
+    --g4:#10B981;
+    --green:#34D399;
+    --grad-g:linear-gradient(90deg,#10B981 0%,#34D399 48%,#8FF0C8 100%);
+    --grad-g-v:linear-gradient(180deg,#8FF0C8 0%,#34D399 60%,rgba(6,95,70,.22) 100%);
+    --glow-g:0 0 22px rgba(52,211,153,.34);
+    --green-soft:rgba(52,211,153,.10);
+
+    /* texto — neutros cálidos */
+    --text:#FBF8F1;
+    --text-dim:#B5AC97;
+    --text-faint:#7C7361;
+    --danger:#F87171;
+
+    --r-lg:18px; --r-md:13px; --r-sm:9px;
+    --shadow:0 24px 50px -32px rgba(0,0,0,.95), 0 1px 0 rgba(255,240,200,.04) inset;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{-webkit-text-size-adjust:100%;}
+  body{
+    background:var(--bg); color:var(--text);
+    font-family:'Inter',system-ui,sans-serif;
+    font-size:14px; line-height:1.55; letter-spacing:-.005em;
+    padding:52px 22px 100px;
+    -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
+    font-feature-settings:'cv11','ss01'; font-variant-numeric:tabular-nums;
+    position:relative; min-height:100vh;
+  }
+  body::before{
+    content:''; position:fixed; inset:0; pointer-events:none; z-index:0;
+    background:
+      radial-gradient(720px 440px at 10% -8%, rgba(217,119,6,.22), transparent 62%),
+      radial-gradient(640px 420px at 92% 2%, rgba(251,191,36,.13), transparent 60%),
+      radial-gradient(1000px 620px at 50% 110%, rgba(180,83,9,.14), transparent 66%);
+  }
+  /* hilo de oro superior */
+  body::after{
+    content:''; position:fixed; top:0; left:0; right:0; height:1px; pointer-events:none; z-index:2;
+    background:linear-gradient(90deg, transparent 0%, rgba(251,191,36,.55) 25%, rgba(254,233,168,.75) 50%, rgba(251,191,36,.55) 75%, transparent 100%);
+  }
+  .wrap{max-width:1240px; margin:0 auto; position:relative; z-index:1;}
+
+  h1,h2,h3,.display{font-family:'Sora','Inter',sans-serif; letter-spacing:-.035em; font-weight:700;}
+  .mono{font-family:'JetBrains Mono',monospace; font-variant-numeric:tabular-nums;}
+  .grad-text{background:var(--grad-h); -webkit-background-clip:text; background-clip:text; color:transparent;}
+
+  /* ---------- HEADER ---------- */
+  header{margin-bottom:30px;}
+  .eyebrow{
+    font-family:'JetBrains Mono',monospace; font-size:10.5px; letter-spacing:.22em;
+    color:var(--v3); text-transform:uppercase; margin-bottom:14px;
+    display:inline-flex; align-items:center; gap:9px;
+    padding:6px 13px 6px 10px; border-radius:100px;
+    background:var(--grad-soft); border:1px solid var(--border);
+  }
+  .eyebrow::before{content:''; width:6px; height:6px; border-radius:50%; background:var(--grad-h); box-shadow:var(--glow);}
+  h1{font-size:clamp(30px,4.6vw,47px); font-weight:800; line-height:1.04; letter-spacing:-.042em; margin-bottom:13px;}
+  .sub{color:var(--text-dim); font-size:14.5px; max-width:720px; line-height:1.7; letter-spacing:-.005em;}
+
+  /* ---------- WEEK BAR ---------- */
+  .week-bar{
+    display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:14px;
+    padding:15px 20px; background:var(--surface); border:1px solid var(--border);
+    border-radius:var(--r-md); margin-bottom:26px; box-shadow:var(--shadow);
+  }
+  .week-bar-label{display:flex; align-items:center; gap:11px; font-size:13px; color:var(--text-dim); transition:opacity .18s ease;}
+  .week-bar-label.dim{opacity:1;}
+  .week-bar-label.dim > span{opacity:.45;}
+  .week-bar-label.dim .fld{border-color:rgba(251,191,36,.10);}
+  .week-bar-label .fld{color:var(--text);}
+  #week-label-input, #month-label-input{min-width:150px;}
+  input, select, textarea{font-family:inherit;}
+  /* fuera las flechitas nativas de los campos numéricos */
+  input[type=number]::-webkit-outer-spin-button,
+  input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none; appearance:none; margin:0;}
+  input[type=number]{-moz-appearance:textfield; appearance:textfield;}
+  .fld{
+    background:var(--inset); border:1px solid rgba(251,191,36,.18); border-radius:var(--r-sm);
+    padding:8px 12px; color:var(--text); font-family:'JetBrains Mono',monospace; font-size:12.5px;
+    transition:border-color .16s ease, box-shadow .16s ease;
+  }
+  .fld::placeholder{color:var(--text-faint);}
+  .fld:focus{outline:none; border-color:var(--border-str); box-shadow:0 0 0 3px rgba(245,158,11,.14);}
+  #week-label-input{min-width:170px;}
+
+  .btn-grad{
+    font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:.06em; text-transform:uppercase;
+    background:var(--grad-h); border:none; border-radius:var(--r-sm);
+    padding:10px 18px; color:var(--on-gold); font-weight:700; cursor:pointer;
+    box-shadow:0 8px 22px -10px rgba(245,158,11,.85); transition:transform .14s ease, box-shadow .14s ease, filter .14s ease;
+  }
+  .btn-grad:hover{transform:translateY(-1px); box-shadow:0 12px 26px -10px rgba(245,158,11,1); filter:brightness(1.06);}
+  .btn-grad.confirm{background:linear-gradient(90deg,#DC2626,#F87171); box-shadow:0 8px 22px -10px rgba(248,113,113,.8);}
+
+  /* ---------- TABS ---------- */
+  .tabs{display:flex; gap:6px; margin:0 0 26px; padding:5px; flex-wrap:wrap;
+    background:var(--surface-2); border:1px solid var(--border); border-radius:100px; width:fit-content; max-width:100%;}
+  .tab{
+    font-family:'Inter',sans-serif; font-size:12.5px; font-weight:600; letter-spacing:.01em;
+    color:var(--text-faint); background:none; border:none; cursor:pointer;
+    padding:9px 17px; border-radius:100px; white-space:nowrap; transition:all .16s ease;
+  }
+  .tab:hover{color:var(--text-dim);}
+  .tab.active{color:var(--on-gold); background:var(--grad-h); box-shadow:0 6px 18px -8px rgba(245,158,11,.9);}
+  .view{display:none; animation:fade .28s ease;}
+  .view.active{display:block;}
+  @keyframes fade{from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:none;}}
+
+  /* ---------- PANELS ---------- */
+  .panel{
+    background:var(--surface); border:1px solid var(--border); border-radius:var(--r-lg);
+    padding:24px 26px; margin-bottom:20px; box-shadow:var(--shadow); position:relative; overflow:hidden;
+  }
+  .panel-title{
+    font-family:'JetBrains Mono',monospace; font-size:10.5px; letter-spacing:.16em; text-transform:uppercase;
+    color:var(--text-faint); margin-bottom:20px;
+    display:flex; justify-content:space-between; align-items:center; gap:14px; flex-wrap:wrap;
+  }
+  .panel-title > span:first-child{display:flex; align-items:center; gap:10px;}
+  .panel-title > span:first-child::before{content:''; width:3px; height:13px; border-radius:2px; background:var(--grad-v);}
+
+  .bar-track{flex:1; height:9px; background:rgba(251,191,36,.10); border-radius:100px; overflow:hidden; border:1px solid rgba(251,191,36,.08);}
+  .bar-fill{height:100%; border-radius:100px; transition:width .45s cubic-bezier(.4,0,.2,1); width:0%;
+    background:var(--grad-g); box-shadow:0 0 14px rgba(52,211,153,.45);}
+
+  /* ---------- MI SEMANA ---------- */
+  .clips-head{display:flex; justify-content:space-between; align-items:center; gap:18px; flex-wrap:wrap; margin-bottom:20px;}
+  .clips-big{display:flex; align-items:baseline; gap:12px;}
+  .clips-big .n{font-family:'Sora',sans-serif; font-size:46px; font-weight:800; line-height:1; letter-spacing:-.045em;
+    background:var(--grad-g); -webkit-background-clip:text; background-clip:text; color:transparent;}
+  .clips-big .of{font-size:13.5px; color:var(--text-dim);}
+  .goal-input{width:66px; text-align:center;}
+  .clips-progress{display:flex; align-items:center; gap:14px; margin-bottom:26px;}
+  .clips-pct{font-family:'JetBrains Mono',monospace; font-size:14.5px; font-weight:600; min-width:48px; text-align:right; color:var(--g3);}
+
+  .counter{display:flex; align-items:center; justify-content:center; gap:18px; padding:8px 0 6px;}
+  .step{
+    width:58px; height:58px; border-radius:19px; border:none;
+    background:linear-gradient(145deg,#FDE68A 0%,#FBBF24 52%,#E8940C 100%);
+    color:var(--on-gold); font-family:'Sora',sans-serif;
+    font-size:27px; font-weight:700; line-height:1; cursor:pointer;
+    display:flex; align-items:center; justify-content:center;
+    box-shadow:0 12px 28px -12px rgba(245,158,11,.95), inset 0 1px 0 rgba(255,255,255,.34), inset 0 -1px 0 rgba(0,0,0,.12);
+    transition:transform .16s ease, box-shadow .16s ease, filter .16s ease;
+  }
+  .step:hover{transform:translateY(-2px); filter:brightness(1.08); box-shadow:0 16px 32px -12px rgba(245,158,11,1), inset 0 1px 0 rgba(255,255,255,.38);}
+  .step:active{transform:translateY(0) scale(.95);}
+  .count-input{
+    width:136px; height:66px; text-align:center; font-family:'Sora',sans-serif;
+    font-size:34px; font-weight:700; border-radius:17px; padding:0 8px;
+  }
+  .count-cap{
+    text-align:center; font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:.12em;
+    text-transform:uppercase; color:var(--text-faint); margin-top:12px;
+  }
+  .clip-hint{
+    margin-top:18px; font-size:12.5px; color:var(--text-dim); line-height:1.65;
+    background:var(--grad-soft); border:1px solid var(--border); border-radius:var(--r-md); padding:12px 15px;
+  }
+  .streak-row{display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:11px; margin-top:18px;}
+  .mini-stat{background:var(--surface-2); border:1px solid var(--border); border-radius:var(--r-md); padding:14px 16px;}
+  .mini-stat .k{font-family:'JetBrains Mono',monospace; font-size:9.5px; letter-spacing:.1em; text-transform:uppercase; color:var(--text-faint); margin-bottom:8px;}
+  .mini-stat .v{font-family:'Sora',sans-serif; font-size:22px; font-weight:700; letter-spacing:-.03em; color:var(--g3);}
+
+  /* calendario mensual de videos */
+  .cal-title{display:flex; align-items:baseline; justify-content:space-between; gap:14px; flex-wrap:wrap; margin:4px 0 12px;}
+  .cal-title > span:first-child{font-family:'Sora',sans-serif; font-size:17px; font-weight:700; letter-spacing:-.03em; color:var(--text);}
+  .cal-hint{font-family:'JetBrains Mono',monospace; font-size:9.5px; color:var(--text-faint); letter-spacing:.04em;}
+  .cal-hint b{color:var(--v3); font-weight:600;}
+  .cal-head{display:grid; grid-template-columns:repeat(7,1fr); gap:7px; margin-bottom:7px;}
+  .cal-head span{font-family:'JetBrains Mono',monospace; font-size:9px; letter-spacing:.12em;
+    text-transform:uppercase; color:var(--text-faint); text-align:center; padding-bottom:2px;}
+  .cal-grid{display:grid; grid-template-columns:repeat(7,1fr); gap:7px;}
+  .cal-cell{
+    background:var(--surface-2); border:1px solid var(--border); border-radius:11px; padding:8px 7px 7px;
+    transition:border-color .16s ease, opacity .16s ease; min-width:0;
+  }
+  .cal-cell.empty{background:none; border:none;}
+  .cal-cell.in-week{border-color:rgba(52,211,153,.30); background:linear-gradient(158deg, rgba(52,211,153,.08), rgba(52,211,153,.02));}
+  .cal-cell.off{opacity:.34;}
+  .cal-cell.today{border-color:var(--border-str); box-shadow:0 0 0 1px rgba(251,191,36,.30), var(--glow);}
+  .cal-day{display:flex; justify-content:space-between; align-items:baseline; gap:4px; margin-bottom:6px;}
+  .cal-day .dn{font-family:'Sora',sans-serif; font-size:12.5px; font-weight:700; color:var(--text-dim); letter-spacing:-.02em;}
+  .cal-cell.today .cal-day .dn{color:var(--v3);}
+  .cal-day .cnt{font-family:'JetBrains Mono',monospace; font-size:8.5px; color:var(--text-faint);}
+  .cal-slots{display:flex; gap:4px;}
+  .cal-slot{
+    flex:1; height:26px; border-radius:7px; cursor:pointer; user-select:none;
+    display:flex; align-items:center; justify-content:center;
+    font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--text-faint);
+    background:var(--inset); border:1px dashed rgba(251,191,36,.22); transition:all .14s ease;
+  }
+  .cal-slot.extra{border-style:solid; border-color:rgba(251,191,36,.12);}
+  .cal-slot:hover{border-color:var(--border-str); color:var(--text-dim);}
+  .cal-slot.filled{
+    background:linear-gradient(145deg,#8FF0C8 0%,#34D399 52%,#0E9F6E 100%);
+    border-style:solid; border-color:transparent; color:#052E20; font-weight:700;
+    box-shadow:0 6px 14px -8px rgba(52,211,153,.9), inset 0 1px 0 rgba(255,255,255,.28);
+  }
+  .cal-slot.filled:hover{color:#052E20;}
+  @media (max-width:640px){
+    .cal-slots{flex-direction:column; gap:3px;}
+    .cal-slot{height:18px; font-size:8.5px;}
+    .cal-head span{font-size:8px;}
+  }
+
+  /* ---------- CONTROL DE PERIODO ---------- */
+  .period-bar{display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap; margin-bottom:22px;}
+  .seg-ctrl{display:inline-flex; gap:4px; padding:4px; background:var(--surface-2); border:1px solid var(--border); border-radius:100px;}
+  .seg-btn{
+    font-family:'Inter',sans-serif; font-size:12.5px; font-weight:600; color:var(--text-faint);
+    background:none; border:none; padding:8px 18px; border-radius:100px; cursor:pointer; transition:all .16s ease;
+  }
+  .seg-btn:hover{color:var(--text-dim);}
+  .seg-btn.active{color:var(--on-gold); background:var(--grad-h); box-shadow:0 6px 18px -8px rgba(245,158,11,.9);}
+  .period-info{font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--text-faint); text-align:right; line-height:1.6;}
+  .period-info b{color:var(--v2); font-weight:600;}
+  .ro-val{
+    width:108px; text-align:right; padding:8px 11px; border-radius:var(--r-sm);
+    font-family:'JetBrains Mono',monospace; font-size:13px; color:var(--text);
+    background:rgba(251,191,36,.07); border:1px solid rgba(251,191,36,.08);
+  }
+
+  /* ---------- KPIs ---------- */
+  .kpi-row{display:grid; grid-template-columns:repeat(auto-fit,minmax(184px,1fr)); gap:13px; margin-bottom:24px;}
+  .kpi{
+    background:var(--surface); border:1px solid var(--border); border-radius:var(--r-md);
+    padding:18px 19px 16px; position:relative; overflow:hidden; box-shadow:var(--shadow);
+    transition:transform .16s ease, border-color .16s ease;
+  }
+  .kpi::before{content:''; position:absolute; top:0; left:0; right:0; height:2px; background:var(--grad-h);}
+  .kpi::after{content:''; position:absolute; top:-40px; right:-30px; width:110px; height:90px; border-radius:50%;
+    background:radial-gradient(circle, rgba(245,158,11,.20), transparent 70%);}
+  .kpi:hover{transform:translateY(-2px); border-color:rgba(251,191,36,.22);}
+  .kpi .k{font-family:'JetBrains Mono',monospace; font-size:9.5px; letter-spacing:.11em; text-transform:uppercase; color:var(--text-faint); margin-bottom:10px; position:relative;}
+  .kpi .v{font-family:'Sora',sans-serif; font-size:27px; font-weight:800; line-height:1; letter-spacing:-.04em; position:relative;
+    background:var(--grad-g); -webkit-background-clip:text; background-clip:text; color:transparent;}
+  .kpi .d{font-family:'JetBrains Mono',monospace; font-size:10px; margin-top:9px; color:var(--text-faint); position:relative;}
+
+  .delta{font-family:'JetBrains Mono',monospace; font-size:10.5px; white-space:nowrap; font-weight:600;}
+  .delta.up{color:var(--g3);}
+  .delta.down{color:var(--text-faint);}
+  .delta.flat{color:var(--text-faint); font-weight:400;}
+
+  /* ---------- METRIC CARDS ---------- */
+  .metrics-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(322px,1fr)); gap:16px; margin-bottom:22px;}
+  .metric-card{
+    background:var(--surface); border:1px solid var(--border); border-radius:var(--r-lg);
+    overflow:hidden; display:flex; flex-direction:column; box-shadow:var(--shadow); position:relative;
+  }
+  .metric-card::before{content:''; position:absolute; top:0; left:0; right:0; height:3px; background:var(--grad-h);}
+  .mc-head{padding:19px 22px 16px; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; gap:12px;}
+  .mc-name{font-family:'Sora',sans-serif; display:flex; align-items:center; gap:10px; font-size:16.5px; font-weight:700;}
+  .mc-name .dot2{width:9px; height:9px; border-radius:50%; background:var(--grad-h); box-shadow:var(--glow);}
+  .mc-er{font-family:'JetBrains Mono',monospace; font-size:9.5px; letter-spacing:.08em; text-transform:uppercase; color:var(--text-faint); text-align:right; line-height:1.5;}
+  .mc-er b{display:block; font-family:'Sora',sans-serif; font-size:17px; letter-spacing:-.01em; font-weight:700;
+    background:var(--grad-g); -webkit-background-clip:text; background-clip:text; color:transparent;}
+
+  .mc-section{padding:4px 22px;}
+  .mc-section.alt{background:linear-gradient(180deg, rgba(245,158,11,.07), rgba(245,158,11,.02)); border-top:1px solid var(--border); border-bottom:1px solid var(--border); padding-bottom:14px;}
+  .mc-sec-title{font-family:'JetBrains Mono',monospace; font-size:9.5px; letter-spacing:.12em; text-transform:uppercase; color:var(--text-faint); display:flex; justify-content:space-between; align-items:baseline; padding:14px 0 6px;}
+  .mc-sec-title b{font-family:'Sora',sans-serif; font-size:15px; letter-spacing:-.02em; color:var(--g3); font-weight:700;}
+  .metric-row{display:flex; align-items:center; justify-content:space-between; gap:10px; padding:9px 0; border-bottom:1px solid rgba(251,191,36,.07);}
+  .mc-section .metric-row:last-child{border-bottom:none;}
+  .metric-label{font-size:12.5px; color:var(--text-dim); display:flex; align-items:center; gap:9px;}
+  .metric-label .gl{font-size:11px; color:var(--v3); width:14px; text-align:center; opacity:.85;}
+  .metric-right{display:flex; align-items:center; gap:11px;}
+  .metric-right .delta{min-width:58px; text-align:right;}
+  .metric-input{width:108px; text-align:right; padding:8px 11px; font-size:13px;}
+
+  .stack-wrap{padding:16px 22px 20px;}
+  .stack{display:flex; height:10px; border-radius:100px; overflow:hidden; background:rgba(251,191,36,.09); gap:2px;}
+  .stack .seg{height:100%; transition:width .45s cubic-bezier(.4,0,.2,1);}
+  .stack-legend{display:flex; flex-wrap:wrap; gap:13px; margin-top:13px;}
+  .stack-legend span{display:flex; align-items:center; gap:7px; font-family:'JetBrains Mono',monospace; font-size:9.5px; color:var(--text-faint);}
+  .stack-legend i{width:8px; height:8px; border-radius:2px; display:block;}
+
+  /* ---------- TABLA DESGLOSE ---------- */
+  .bd-table{width:100%; border-collapse:collapse;}
+  .bd-table th, .bd-table td{padding:12px 13px; font-size:12.5px; text-align:right;}
+  .bd-table th:first-child, .bd-table td:first-child{text-align:left;}
+  .bd-table th{
+    font-family:'JetBrains Mono',monospace; font-size:9.5px; letter-spacing:.1em; text-transform:uppercase;
+    color:var(--text-faint); border-bottom:1px solid var(--border);
+  }
+  .bd-table td{border-bottom:1px solid rgba(251,191,36,.07); color:var(--text-dim); font-family:'JetBrains Mono',monospace; font-variant-numeric:tabular-nums;}
+  .bd-table td:first-child{font-family:'Inter',sans-serif; color:var(--text); font-weight:500;}
+  .bd-table tbody tr:hover td{background:rgba(245,158,11,.045);}
+  .bd-table tr:last-child td{border-bottom:none;}
+  .bd-table tr.tot td{color:var(--g3); font-weight:700; border-top:1px solid var(--border); background:rgba(245,158,11,.05);}
+  .bd-table tr.tot td:first-child{color:var(--g3);}
+  .bd-share{display:flex; align-items:center; gap:10px; justify-content:flex-end;}
+  .bd-share .mini-track{width:74px; height:6px; background:rgba(251,191,36,.10); border-radius:100px; overflow:hidden;}
+  .bd-share .mini-fill{height:100%; background:var(--grad-g); border-radius:100px;}
+
+  /* ---------- CHART ---------- */
+  .chart-controls{display:flex; gap:8px; flex-wrap:wrap;}
+  .chart-controls select{
+    background:var(--inset); border:1px solid rgba(251,191,36,.18); border-radius:var(--r-sm); padding:7px 11px;
+    color:var(--text-dim); font-family:'JetBrains Mono',monospace; font-size:11px; cursor:pointer;
+  }
+  .chart-controls select:focus{outline:none; border-color:var(--border-str); box-shadow:0 0 0 3px rgba(245,158,11,.14);}
+  .chart{display:flex; align-items:flex-end; gap:13px; height:210px; padding-top:12px;}
+  .chart-col{flex:1; display:flex; flex-direction:column; align-items:center; justify-content:flex-end; height:100%; min-width:0;}
+  .chart-val{font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--text-dim); margin-bottom:8px; white-space:nowrap;}
+  .chart-bar{width:100%; max-width:50px; border-radius:7px 7px 3px 3px; min-height:4px;
+    background:linear-gradient(180deg, rgba(143,240,200,.80) 0%, rgba(52,211,153,.50) 55%, rgba(6,95,70,.14) 100%);
+    transition:height .45s cubic-bezier(.4,0,.2,1);}
+  .chart-col.current .chart-bar{background:var(--grad-g-v); box-shadow:0 0 22px rgba(52,211,153,.35);}
+  .chart-col.current .chart-val{color:var(--g2); font-weight:600;}
+  .chart-lbl{font-family:'JetBrains Mono',monospace; font-size:9.5px; color:var(--text-faint); margin-top:12px; text-align:center; letter-spacing:.04em; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:100%;}
+  .chart-col.current .chart-lbl{color:var(--v3);}
+  .chart-empty{font-size:12.5px; color:var(--text-faint); font-style:italic; padding:44px 0; text-align:center;}
+
+  /* ---------- OBJETIVOS ---------- */
+  .goals-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(290px,1fr)); gap:16px;}
+  .goal-card{
+    background:var(--surface); border:1px solid var(--border); border-radius:var(--r-lg);
+    padding:22px 24px; display:flex; flex-direction:column; gap:15px; position:relative; overflow:hidden;
+    box-shadow:var(--shadow); transition:transform .16s ease, border-color .16s ease;
+  }
+  .goal-card::before{content:''; position:absolute; top:0; left:0; right:0; height:3px; background:var(--grad-h);}
+  .goal-card:hover{transform:translateY(-2px); border-color:rgba(251,191,36,.22);}
+  .goal-card.total{grid-column:1/-1; background:linear-gradient(150deg, rgba(245,158,11,.12) 0%, rgba(255,255,255,.012) 60%);}
+  .goal-head{display:flex; align-items:center; justify-content:space-between; gap:10px;}
+  .goal-name{font-family:'Sora',sans-serif; display:flex; align-items:center; gap:10px; font-size:16px; font-weight:700;}
+  .goal-name .dot2{width:9px; height:9px; border-radius:50%; background:var(--grad-h); box-shadow:var(--glow);}
+  .goal-pct{font-family:'Sora',sans-serif; font-size:19px; font-weight:700;
+    background:var(--grad-g); -webkit-background-clip:text; background-clip:text; color:transparent;}
+  .goal-nums{display:flex; align-items:flex-end; gap:8px;}
+  .goal-cur{font-family:'Sora',sans-serif; font-size:30px; font-weight:700; line-height:1; color:var(--text);}
+  .goal-sep{font-size:13px; color:var(--text-faint); padding-bottom:3px;}
+  .goal-meta-wrap{display:flex; align-items:center; gap:9px; font-size:12.5px; color:var(--text-dim);}
+  .goal-meta-input{width:104px; text-align:right; padding:7px 10px; font-size:13px;}
+  .goal-foot{font-size:12.5px; color:var(--text-faint);}
+  .goal-foot b{color:var(--g3); font-family:'JetBrains Mono',monospace; font-weight:600;}
+
+  /* ---------- IDEAS ---------- */
+  .ideas-cols{display:grid; grid-template-columns:1fr 1fr; gap:18px;}
+  .ideas-panel{background:var(--surface); border:1px solid var(--border); border-radius:var(--r-lg); padding:22px; display:flex; flex-direction:column; gap:15px; box-shadow:var(--shadow); position:relative; overflow:hidden;}
+  .ideas-panel::before{content:''; position:absolute; top:0; left:0; right:0; height:3px; background:var(--grad-h);}
+  .ideas-panel h3{font-size:16px; font-weight:700; display:flex; align-items:center; gap:9px;}
+  .ideas-panel h3::before{content:''; width:3px; height:14px; border-radius:2px; background:var(--grad-v);}
+  .ideas-panel .hint{font-size:12px; color:var(--text-faint); margin-top:-9px; line-height:1.6;}
+  .add-row{display:flex; gap:9px; flex-wrap:wrap;}
+  .add-row input, .add-row textarea{
+    flex:1; min-width:120px; background:var(--inset); border:1px solid rgba(251,191,36,.18); border-radius:var(--r-sm);
+    padding:10px 12px; color:var(--text); font-size:13px; font-family:'Inter',sans-serif; resize:vertical;
+    transition:border-color .16s ease, box-shadow .16s ease;
+  }
+  .add-row input::placeholder, .add-row textarea::placeholder{color:var(--text-faint);}
+  .add-row input:focus, .add-row textarea:focus{outline:none; border-color:var(--border-str); box-shadow:0 0 0 3px rgba(245,158,11,.14);}
+  .add-row button{
+    background:var(--grad-h); border:none; border-radius:var(--r-sm); padding:10px 18px;
+    color:var(--on-gold); font-weight:700; font-size:12.5px; cursor:pointer; white-space:nowrap;
+    box-shadow:0 8px 20px -10px rgba(245,158,11,.85); transition:transform .14s ease, filter .14s ease;
+  }
+  .add-row button:hover{transform:translateY(-1px); filter:brightness(1.06);}
+  .entry-list{display:flex; flex-direction:column; gap:9px; max-height:470px; overflow-y:auto; padding-right:3px;}
+  .entry-list::-webkit-scrollbar{width:6px;}
+  .entry-list::-webkit-scrollbar-track{background:transparent;}
+  .entry-list::-webkit-scrollbar-thumb{background:rgba(251,191,36,.22); border-radius:100px;}
+  .entry{background:var(--surface-2); border:1px solid var(--border); border-radius:var(--r-md); padding:12px 14px; display:flex; justify-content:space-between; align-items:flex-start; gap:11px; transition:border-color .16s ease;}
+  .entry:hover{border-color:rgba(251,191,36,.24);}
+  .entry-body{flex:1; min-width:0;}
+  .entry-text{font-size:13px; color:var(--text-dim); line-height:1.6; white-space:pre-wrap; word-break:break-word;}
+  .entry-link{font-size:13px; color:var(--v2); text-decoration:none; word-break:break-all;}
+  .entry-link:hover{text-decoration:underline;}
+  .entry-label{font-size:11.5px; color:var(--text-faint); margin-top:4px;}
+  .entry-meta{font-family:'JetBrains Mono',monospace; font-size:9.5px; color:var(--text-faint); margin-top:6px;}
+  .entry-del{color:var(--text-faint); cursor:pointer; font-size:14px; padding:2px 5px; flex-shrink:0; border-radius:5px; transition:all .14s ease;}
+  .entry-del:hover{color:var(--danger); background:rgba(248,113,113,.10);}
+  .empty-state{font-size:12.5px; color:var(--text-faint); font-style:italic; text-align:center; padding:24px 0;}
+
+  /* ---------- HISTORIAL ---------- */
+  .hist-table{width:100%; border-collapse:collapse; background:var(--surface); border:1px solid var(--border); border-radius:var(--r-lg); overflow:hidden; box-shadow:var(--shadow);}
+  .hist-table th, .hist-table td{padding:13px 15px; text-align:left; font-size:12.5px;}
+  .hist-table th{
+    font-family:'JetBrains Mono',monospace; font-size:9.5px; letter-spacing:.1em; text-transform:uppercase;
+    color:var(--text-faint); border-bottom:1px solid var(--border); background:rgba(245,158,11,.06);
+  }
+  .hist-table td{border-bottom:1px solid rgba(251,191,36,.07); color:var(--text-dim);}
+  .hist-table tbody tr:hover td{background:rgba(245,158,11,.04);}
+  .hist-table tr:last-child td{border-bottom:none;}
+  .hist-table td.n{font-family:'JetBrains Mono',monospace; font-variant-numeric:tabular-nums;}
+  .hist-week{color:var(--text); font-weight:600; cursor:pointer; display:flex; align-items:center; gap:8px;}
+  .hist-week .caret{color:var(--text-faint); font-size:9px; transition:transform .18s ease;}
+  .hist-tag{
+    font-family:'JetBrains Mono',monospace; font-size:8.5px; letter-spacing:.1em; text-transform:uppercase;
+    padding:3px 7px; border-radius:100px; font-weight:600; flex-shrink:0;
+    color:var(--text-faint); background:rgba(255,240,200,.05); border:1px solid var(--border);
+  }
+  .hist-tag.mes{color:var(--v3); background:var(--grad-soft); border-color:var(--border-str);}
+  .hist-week:hover .caret{color:var(--v3);}
+  .hist-week.open .caret{transform:rotate(90deg); color:var(--v3);}
+  .hist-actions{display:flex; gap:7px; justify-content:flex-end;}
+  .hist-btn{
+    font-family:'JetBrains Mono',monospace; font-size:9.5px; letter-spacing:.05em; text-transform:uppercase;
+    background:none; border:1px solid rgba(251,191,36,.18); border-radius:6px; padding:5px 9px; cursor:pointer; color:var(--text-faint);
+    transition:all .14s ease;
+  }
+  .hist-btn:hover{color:var(--text); border-color:var(--border-str);}
+  .hist-btn.del:hover{color:var(--danger); border-color:rgba(248,113,113,.45);}
+  .hist-btn.save{color:var(--v2); border-color:var(--border-str);}
+  .hist-week-input{width:140px; padding:5px 8px; font-family:'Inter',sans-serif; font-size:12px;}
+  .detail-row td{background:rgba(245,158,11,.045); padding:0;}
+  .detail-inner{padding:16px 18px; display:grid; grid-template-columns:repeat(auto-fit,minmax(210px,1fr)); gap:13px;}
+  .detail-box{border:1px solid var(--border); border-radius:var(--r-md); padding:14px 16px; background:var(--surface-2);}
+  .detail-box .dn{font-family:'Sora',sans-serif; font-size:13px; font-weight:700; margin-bottom:11px;
+    background:var(--grad-h); -webkit-background-clip:text; background-clip:text; color:transparent;}
+  .detail-box .dl{display:flex; justify-content:space-between; font-size:11.5px; color:var(--text-faint); padding:3.5px 0;}
+  .detail-box .dl b{font-family:'JetBrains Mono',monospace; color:var(--text-dim); font-weight:600;}
+  .detail-box .dl.sep{border-top:1px solid var(--border); margin-top:8px; padding-top:9px;}
+  .detail-box .dl.sep b{color:var(--g3);}
+
+  /* ---------- MEJORES VIDEOS ---------- */
+  .bv-card{
+    background:var(--surface); border:1px solid var(--border); border-radius:var(--r-lg);
+    padding:20px; box-shadow:var(--shadow); display:grid; grid-template-columns:232px 1fr; gap:24px; align-items:start;
+    position:relative; overflow:hidden;
+  }
+  .bv-card::before{
+    content:''; position:absolute; top:0; left:0; right:0; height:1px;
+    background:linear-gradient(90deg, transparent, rgba(251,191,36,.34) 30%, rgba(254,233,168,.44) 50%, rgba(251,191,36,.34) 70%, transparent);
+  }
+  .bv-player{position:relative; width:100%; padding-top:177%; background:#000; border-radius:var(--r-md);
+    overflow:hidden; border:1px solid var(--border);}
+  .bv-player video{position:absolute; inset:0; width:100%; height:100%; object-fit:contain; background:#000;}
+  .bv-right{display:flex; flex-direction:column; gap:16px; min-width:0;}
+  .bv-head{display:flex; align-items:center; gap:10px;}
+  .bv-rank{
+    flex-shrink:0; width:32px; height:32px; border-radius:9px; display:flex; align-items:center; justify-content:center;
+    font-family:'Sora',sans-serif; font-size:13px; font-weight:800; color:var(--on-gold);
+    background:var(--grad-h); box-shadow:0 6px 16px -8px rgba(245,158,11,.85);
+  }
+  .bv-rank.muted{background:var(--inset); color:var(--text-faint); border:1px solid var(--border); box-shadow:none;}
+  .bv-title-inp{flex:1; min-width:0; font-family:'Sora',sans-serif !important; font-size:15px !important; font-weight:600; letter-spacing:-.02em;}
+  .bv-del-btn{
+    flex-shrink:0; background:transparent; border:1px solid var(--border); color:var(--text-faint);
+    width:32px; height:32px; border-radius:var(--r-sm); cursor:pointer; font-size:13px; transition:all .14s ease;
+  }
+  .bv-del-btn:hover{color:var(--danger); border-color:rgba(248,113,113,.45); background:rgba(248,113,113,.07);}
+
+  /* tasa de interacción destacada */
+  .bv-hero{
+    display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap;
+    padding:15px 18px; border-radius:var(--r-md);
+    background:linear-gradient(135deg, rgba(52,211,153,.13) 0%, rgba(52,211,153,.03) 60%);
+    border:1px solid rgba(52,211,153,.24);
+  }
+  .bv-hero-k{font-family:'JetBrains Mono',monospace; font-size:9.5px; letter-spacing:.13em;
+    text-transform:uppercase; color:var(--text-faint); margin-bottom:6px;}
+  .bv-hero-v{font-family:'Sora',sans-serif; font-size:31px; font-weight:800; line-height:1; letter-spacing:-.04em;
+    background:var(--grad-g); -webkit-background-clip:text; background-clip:text; color:transparent;}
+  .bv-hero-note{font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--text-faint); text-align:right; line-height:1.7;}
+  .bv-hero-note b{color:var(--g3); font-weight:600;}
+
+  /* mosaico de métricas editables */
+  .bv-stats{display:grid; grid-template-columns:repeat(auto-fit,minmax(126px,1fr)); gap:10px;}
+  .bv-stat{
+    background:var(--surface-2); border:1px solid var(--border); border-radius:var(--r-md);
+    padding:12px 14px 11px; transition:border-color .16s ease, transform .16s ease;
+  }
+  .bv-stat:hover{border-color:var(--border-str); transform:translateY(-1px);}
+  .bv-stat-k{
+    font-family:'JetBrains Mono',monospace; font-size:9px; letter-spacing:.11em; text-transform:uppercase;
+    color:var(--text-faint); margin-bottom:7px; display:flex; align-items:center; gap:6px;
+  }
+  .bv-stat-k i{font-style:normal; color:var(--v4); opacity:.85; font-size:10.5px;}
+  .bv-stat-v{
+    width:100%; background:transparent; border:none; padding:0; border-radius:5px;
+    font-family:'Sora',sans-serif; font-size:21px; font-weight:800; letter-spacing:-.035em;
+    color:var(--g3); font-variant-numeric:tabular-nums; transition:background .14s ease;
+  }
+  .bv-stat-v:hover{background:rgba(251,191,36,.05);}
+  .bv-stat-v:focus{outline:none; background:rgba(52,211,153,.09); box-shadow:0 0 0 2px rgba(52,211,153,.32);}
+  /* desglose de interacciones */
+  .bv-break{padding-top:2px;}
+  .bv-break-k{font-family:'JetBrains Mono',monospace; font-size:9px; letter-spacing:.12em;
+    text-transform:uppercase; color:var(--text-faint); margin-bottom:9px;}
+  .bv-break-bar{display:flex; height:9px; border-radius:100px; overflow:hidden; gap:2px;
+    background:rgba(52,211,153,.07); border:1px solid rgba(52,211,153,.10);}
+  .bv-break-bar span{height:100%; transition:width .45s cubic-bezier(.4,0,.2,1); min-width:0;}
+  .bv-break-legend{display:flex; flex-wrap:wrap; gap:14px; margin-top:11px;}
+  .bv-break-legend span{display:flex; align-items:center; gap:7px;
+    font-family:'JetBrains Mono',monospace; font-size:9.5px; color:var(--text-faint);}
+  .bv-break-legend i{width:8px; height:8px; border-radius:2px; display:block; flex-shrink:0;}
+  .bv-break-legend b{color:var(--g3); font-weight:600;}
+  .bv-foot{font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--text-faint); margin-top:auto; letter-spacing:.04em;}
+  @media (max-width:720px){ .bv-card{grid-template-columns:1fr;} }
+
+  /* ---------- ACABADO ---------- */
+  ::selection{background:rgba(251,191,36,.28); color:var(--text);}
+  html{scroll-behavior:smooth;}
+  ::-webkit-scrollbar{width:10px; height:10px;}
+  ::-webkit-scrollbar-track{background:var(--bg);}
+  ::-webkit-scrollbar-thumb{background:rgba(251,191,36,.18); border-radius:100px; border:2px solid var(--bg);}
+  ::-webkit-scrollbar-thumb:hover{background:rgba(251,191,36,.32);}
+  :focus-visible{outline:2px solid rgba(251,191,36,.55); outline-offset:2px;}
+  button{font-family:inherit;}
+  /* brillo superior sutil en los paneles */
+  .panel::after, .kpi::before ~ .k{pointer-events:none;}
+  .panel::before{
+    content:''; position:absolute; top:0; left:0; right:0; height:1px; pointer-events:none;
+    background:linear-gradient(90deg, transparent, rgba(251,191,36,.32) 30%, rgba(254,233,168,.42) 50%, rgba(251,191,36,.32) 70%, transparent);
+  }
+
+  @media (max-width:860px){
+    .ideas-cols{grid-template-columns:1fr;}
+    .period-bar{flex-direction:column; align-items:flex-start;}
+    .period-info{text-align:left;}
+    .hist-table, .bd-table{font-size:11px; display:block; overflow-x:auto;}
+    .tabs{width:100%; justify-content:flex-start; overflow-x:auto;}
+  }
+  @media (max-width:480px){
+    body{padding:36px 15px 70px;}
+    .chart{gap:7px;}
+    .panel{padding:20px 18px;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="eyebrow">Content Ops · Lucca</div>
+    <h1>Dashboard de Contenido <span class="grad-text">— Adrián Miller</span></h1>
+    <p class="sub">Tracker semanal de videos, métricas de Instagram, TikTok y YouTube con desglose de interacciones, y objetivos de seguidores con avance en tiempo real.</p>
+  </header>
+
+  <div class="week-bar">
+    <div class="week-bar-label" id="grp-week">
+      <span id="week-actual-label">Semana actual:</span>
+      <input type="text" class="fld" id="week-label-input" placeholder="Ej: 1–7 sep">
+    </div>
+    <div class="week-bar-label" id="grp-month">
+      <span id="month-actual-label">Mes actual:</span>
+      <input type="text" class="fld" id="month-label-input" placeholder="Ej: Septiembre 2026">
+    </div>
+    <div class="week-bar-label">
+      <span id="week-date-label">Fecha:</span>
+      <input type="date" class="fld" id="week-date-input" title="Define en qué mes/trimestre se agrupa lo que archives. Si cargás un periodo pasado, poné una fecha de ese periodo.">
+    </div>
+    <div class="week-bar-label">
+      <span>Cerrar como:</span>
+      <div class="seg-ctrl" id="close-mode-ctrl" style="display:inline-flex;">
+        <button class="seg-btn active" data-mode="week" type="button">Semana</button>
+        <button class="seg-btn" data-mode="month" type="button">Mes</button>
+      </div>
+    </div>
+    <button class="btn-grad" id="close-week-btn">Cerrar semana y archivar →</button>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" data-tab="semana">Mi Semana</button>
+    <button class="tab" data-tab="metricas">Métricas</button>
+    <button class="tab" data-tab="objetivos">Objetivos</button>
+    <button class="tab" data-tab="mejoresvideos">Mejores Videos</button>
+    <button class="tab" data-tab="ideas">Ideas &amp; Referencias</button>
+    <button class="tab" data-tab="historial">Historial</button>
+  </div>
+
+  <!-- ===================== MI SEMANA ===================== -->
+  <div class="view active" id="view-semana">
+    <div class="panel">
+      <div class="clips-head">
+        <div class="clips-big"><span class="n" id="clips-done">0</span><span class="of" id="clips-period-label">videos subidos esta semana</span></div>
+        <div class="week-bar-label" style="gap:9px;">
+          <span id="clips-goal-label">Meta semanal:</span>
+          <input type="number" min="1" class="fld goal-input" id="clips-goal-input" value="14">
+          <span style="color:var(--text-faint); font-size:12.5px;">videos</span>
+        </div>
+      </div>
+      <div class="clips-progress">
+        <div class="bar-track"><div class="bar-fill" id="clips-bar"></div></div>
+        <div class="clips-pct" id="clips-pct">0%</div>
+      </div>
+
+      <div class="cal-title"><span id="cal-month-label">—</span><span class="cal-hint">Cambiá el mes con el campo <b>Fecha</b> de arriba</span></div>
+      <div id="day-grid"></div>
+
+      <div class="counter" id="clip-counter" style="display:none;">
+        <button class="step" id="clip-minus" title="Restar un video">−</button>
+        <input type="number" min="0" class="fld count-input" id="clips-count-input" value="0">
+        <button class="step plus" id="clip-plus" title="Sumar un video">+</button>
+      </div>
+      <div class="count-cap" id="count-cap-text" style="display:none;">Videos subidos este mes — usá los botones o escribí el número</div>
+
+      <div class="streak-row" id="streak-row"></div>
+
+      <div class="clip-hint" id="clip-hint">Definí tu meta semanal escribiendo el número y andá sumando los videos a medida que los subís. Al cerrar la semana el total queda archivado en el Historial y el contador vuelve a cero.</div>
+    </div>
+  </div>
+
+  <!-- ===================== MÉTRICAS ===================== -->
+  <div class="view" id="view-metricas">
+    <p class="sub" style="margin-bottom:16px;">Cargá los números una vez por semana o una vez por mes, idealmente el mismo día. Las vistas trimestrales se arman solas sumando lo que vayas archivando.</p>
+
+    <div style="display:flex; align-items:center; gap:10px; margin-bottom:24px; flex-wrap:wrap;">
+      <button class="btn-grad" id="airtable-sync-semana" title="Trae la fila de la tabla Metricas Semanales que coincida con el campo Semana actual">⟳ Sincronizar semana</button>
+      <button class="btn-grad" id="airtable-sync-mes" title="Trae la fila de la tabla Metricas Mensuales que coincida con el campo Mes actual">⟳ Sincronizar mes</button>
+      <span id="airtable-sync-status" style="font-size:12px; color:var(--text-faint);"></span>
+    </div>
+
+    <div class="period-bar">
+      <div class="seg-ctrl" id="period-ctrl">
+        <button class="seg-btn active" data-period="week">Semanal</button>
+        <button class="seg-btn" data-period="month">Mensual</button>
+        <button class="seg-btn" data-period="quarter">Trimestral</button>
+      </div>
+      <div class="period-info" id="period-info"></div>
+    </div>
+
+    <div class="kpi-row" id="kpi-row"></div>
+
+    <div class="metrics-grid" id="metrics-grid"></div>
+
+    <div class="panel">
+      <div class="panel-title"><span>Desglose de interacciones por plataforma</span></div>
+      <div id="breakdown-wrap"></div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-title">
+        <span>Evolución semana a semana</span>
+        <div class="chart-controls">
+          <select id="chart-metric">
+            <option value="vistas">Vistas</option>
+            <option value="interacciones">Interacciones (total)</option>
+            <option value="megusta">Me gusta</option>
+            <option value="compartidos">Compartidos</option>
+            <option value="guardados">Guardados</option>
+            <option value="comentarios">Comentarios</option>
+            <option value="seguidores">Seguidores</option>
+            <option value="er">Tasa de interacción</option>
+          </select>
+          <select id="chart-platform">
+            <option value="all">Todas las plataformas</option>
+            <option value="ig">Instagram</option>
+            <option value="tt">TikTok</option>
+            <option value="yt">YouTube</option>
+          </select>
+        </div>
+      </div>
+      <div id="chart-wrap"></div>
+    </div>
+  </div>
+
+  <!-- ===================== OBJETIVOS ===================== -->
+  <div class="view" id="view-objetivos">
+    <p class="sub" style="margin-bottom:24px;">Definí la meta de seguidores de cada plataforma. El avance se calcula solo con los seguidores que cargás en la pestaña de Métricas.</p>
+    <div class="goals-grid" id="goals-grid"></div>
+  </div>
+
+  <!-- ===================== MEJORES VIDEOS ===================== -->
+  <div class="view" id="view-mejoresvideos">
+    <p class="sub" style="margin-bottom:20px;">Subí tus mejores videos directo al dashboard y cargá las métricas a mano. Se reproducen acá mismo, sin abrir otra ventana.</p>
+    <input type="file" id="bv-file-input" accept="video/*" style="display:none;">
+    <button class="btn-grad" id="bv-upload-btn" style="margin-bottom:22px;">+ Subir video</button>
+    <div id="bv-empty" style="font-size:12.5px; color:var(--text-faint); font-style:italic; text-align:center; padding:30px 0;">Todavía no subiste ningún video.</div>
+    <div id="bv-grid" style="display:flex; flex-direction:column; gap:22px;"></div>
+  </div>
+
+  <!-- ===================== IDEAS & REFERENCIAS ===================== -->
+  <div class="view" id="view-ideas">
+    <div class="ideas-cols">
+      <div class="ideas-panel">
+        <h3>Ideas</h3>
+        <div class="hint">Anotá lo que se te ocurra — se guarda solo.</div>
+        <div class="add-row">
+          <textarea id="idea-input" rows="2" placeholder="Ej: probar un video comparando estrategias..."></textarea>
+          <button id="idea-add">Agregar</button>
+        </div>
+        <div class="entry-list" id="ideas-list"></div>
+      </div>
+      <div class="ideas-panel">
+        <h3>Referencias</h3>
+        <div class="hint">Pegá el link del post/reel que quieras guardar como referencia, con una nota corta.</div>
+        <div class="add-row">
+          <input id="ref-url" type="text" placeholder="https://instagram.com/...">
+        </div>
+        <div class="add-row">
+          <input id="ref-label" type="text" placeholder="Nota corta (ej: buen hook, formato a copiar...)">
+          <button id="ref-add">Agregar</button>
+        </div>
+        <div class="entry-list" id="refs-list"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== HISTORIAL ===================== -->
+  <div class="view" id="view-historial">
+    <p class="sub" style="margin-bottom:22px;">Cada periodo cerrado — semana o mes — queda archivado con los videos subidos y las métricas de las tres plataformas. Hacé click en el nombre para ver el detalle completo.</p>
+    <table class="hist-table">
+      <thead>
+        <tr><th>Periodo</th><th>Cerrado el</th><th>Videos</th><th>Vistas</th><th>Interacciones</th><th>Seguidores</th><th>TI</th><th></th></tr>
+      </thead>
+      <tbody id="historial-body">
+        <tr><td colspan="8" style="text-align:center; font-style:italic; color:var(--text-faint);">Todavía no se cerró ninguna semana.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+</div>
+
+<script>
+/* ============ STORAGE ============ */
+const store = {
+  async get(key){
+    try{
+      if(window.storage && typeof window.storage.get === 'function'){
+        const r = await window.storage.get(key, true);
+        return (r && r.value != null) ? r.value : null;
+      }
+    }catch(e){}
+    try{ return localStorage.getItem(key); }catch(e){ return null; }
+  },
+  async set(key, val){
+    try{
+      if(window.storage && typeof window.storage.set === 'function'){
+        await window.storage.set(key, val, true); return;
+      }
+    }catch(e){}
+    try{ localStorage.setItem(key, val); }catch(e){}
+  }
+};
+const K = {
+  clips:'hta:lucca:clips', clipsGoal:'hta:lucca:clipsgoal', metrics:'hta:lucca:metrics',
+  goals:'hta:lucca:goals', week:'hta:lucca:weeklabel', hist:'hta:lucca:historial',
+  ideas:'hta:lucca:ideas', refs:'hta:lucca:referencias', bestVideos:'hta:lucca:bestvideos',
+  weekDate:'hta:lucca:weekdate', clipsGrid:'hta:lucca:clipsgrid', monthLabel:'hta:lucca:monthlabel'
+};
+
+function todayISO(){
+  const d = new Date();
+  const tz = d.getTimezoneOffset();
+  return new Date(d.getTime() - tz*60000).toISOString().slice(0,10);
+}
+function weekDateMs(){
+  const v = weekDate || todayISO();
+  return new Date(v+'T12:00:00').getTime();
+}
+
+/* ============ IndexedDB (archivos de video pesados) ============ */
+const BV_DB_NAME = 'hta_lucca_videos_db';
+const BV_STORE = 'blobs';
+function openBVDB(){
+  return new Promise((resolve, reject) => {
+    const req = indexedDB.open(BV_DB_NAME, 1);
+    req.onupgradeneeded = () => { req.result.createObjectStore(BV_STORE); };
+    req.onsuccess = () => resolve(req.result);
+    req.onerror = () => reject(req.error);
+  });
+}
+async function bvSaveBlob(id, blob){
+  const db = await openBVDB();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(BV_STORE, 'readwrite');
+    tx.objectStore(BV_STORE).put(blob, id);
+    tx.oncomplete = () => resolve();
+    tx.onerror = () => reject(tx.error);
+  });
+}
+async function bvGetBlob(id){
+  const db = await openBVDB();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(BV_STORE, 'readonly');
+    const req = tx.objectStore(BV_STORE).get(id);
+    req.onsuccess = () => resolve(req.result || null);
+    req.onerror = () => reject(req.error);
+  });
+}
+async function bvDeleteBlob(id){
+  const db = await openBVDB();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(BV_STORE, 'readwrite');
+    tx.objectStore(BV_STORE).delete(id);
+    tx.oncomplete = () => resolve();
+    tx.onerror = () => reject(tx.error);
+  });
+}
+
+/* ============ CONFIG ============ */
+const DAYS = ['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'];
+const PLATFORMS = [
+  {id:'ig', name:'Instagram'},
+  {id:'tt', name:'TikTok'},
+  {id:'yt', name:'YouTube'}
+];
+const INTER = [
+  {id:'megusta',     label:'Me gusta',    gl:'♥', shade:'#FEF3C7'},
+  {id:'compartidos', label:'Compartidos', gl:'↗', shade:'#FDE68A'},
+  {id:'guardados',   label:'Guardados',   gl:'⌾', shade:'#FBBF24'},
+  {id:'comentarios', label:'Comentarios', gl:'❝', shade:'#D97706'}
+];
+const fmt = n => (Number(n)||0).toLocaleString('es-ES');
+const blankPlat = () => ({vistas:0, seguidores:0, megusta:0, compartidos:0, guardados:0, comentarios:0});
+
+const MESES = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+// nombre completo para la etiqueta de mes: tiene que coincidir con la columna "Mes" de Airtable
+const MESES_LARGOS = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+const PERIOD_NAME = {week:'Semanal', month:'Mensual', quarter:'Trimestral'};
+const PERIOD_PREV = {week:'vs. semana anterior', month:'vs. mes anterior', quarter:'vs. trimestre anterior'};
+
+/* ============ AIRTABLE (sincronización de métricas, solo lectura) ============ */
+const AIRTABLE_BASE_ID = 'appaArbbCN5pFoOcH';
+const AIRTABLE_TABLE_ID = 'tblooyWVm2mQiSQ9J';       // Metricas Semanales
+const AIRTABLE_TABLE_MES_ID = 'tblen6tL9MKbrqFBb';   // Metricas Mensuales
+const AIRTABLE_TOKEN_KEY = 'hta:lucca:airtable_token';
+const AIRTABLE_PLATFORM_MAP = {Instagram:'ig', TikTok:'tt', YouTube:'yt'};
+
+function getAirtableToken(){
+  let token = null;
+  try{ token = localStorage.getItem(AIRTABLE_TOKEN_KEY); }catch(e){}
+  if(!token){
+    token = prompt('Pegá tu Personal Access Token de Airtable (empieza con "pat"):');
+    if(token){ try{ localStorage.setItem(AIRTABLE_TOKEN_KEY, token.trim()); }catch(e){} }
+  }
+  return token ? token.trim() : null;
+}
+
+async function syncFromAirtable(periodo){
+  const statusEl = document.getElementById('airtable-sync-status');
+  const token = getAirtableToken();
+  if(!token){ statusEl.textContent = 'Sincronización cancelada — falta el token.'; return; }
+
+  // el periodo llega explícito desde el botón que se apretó
+  const esMes = periodo === 'month';
+  const etiqueta = (esMes ? monthLabel : weekLabel || '').trim();
+  const tablaId = esMes ? AIRTABLE_TABLE_MES_ID : AIRTABLE_TABLE_ID;
+  const campo = esMes ? 'Mes' : 'Semana';
+  if(!etiqueta){
+    statusEl.textContent = esMes
+      ? 'Escribí primero el "Mes actual" arriba de todo (ej: Septiembre 2026).'
+      : 'Escribí primero la "Semana actual" arriba de todo (ej: 1-7 sep).';
+    return;
+  }
+
+  statusEl.textContent = `Sincronizando ${esMes ? 'el mes' : 'la semana'} "${etiqueta}"…`;
+  try{
+    const formula = encodeURIComponent(`{${campo}} = '${etiqueta.replace(/'/g,"\\'")}'`);
+    const url = `https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/${tablaId}?filterByFormula=${formula}`;
+    const res = await fetch(url, { headers: { 'Authorization': 'Bearer ' + token } });
+
+    if(res.status === 401 || res.status === 403){
+      try{ localStorage.removeItem(AIRTABLE_TOKEN_KEY); }catch(e){}
+      throw new Error('Token inválido o sin permiso. Volvé a intentar y pegalo de nuevo.');
+    }
+    if(!res.ok) throw new Error('Error '+res.status);
+
+    const data = await res.json();
+    if(!data.records || !data.records.length){
+      statusEl.textContent = `No hay filas en la tabla "${esMes ? 'Metricas Mensuales' : 'Metricas Semanales'}" para "${etiqueta}".`;
+      return;
+    }
+
+    let updated = 0;
+    data.records.forEach(rec => {
+      const f = rec.fields;
+      const platId = AIRTABLE_PLATFORM_MAP[f['Plataforma']];
+      if(!platId) return;
+      metrics[platId] = {
+        vistas: f['Vistas'] || 0,
+        seguidores: f['Seguidores'] || 0,
+        megusta: f['Me gusta'] || 0,
+        compartidos: f['Compartidos'] || 0,
+        guardados: f['Guardados'] || 0,
+        comentarios: f['Comentarios'] || 0
+      };
+      updated++;
+    });
+
+    await store.set(K.metrics, JSON.stringify(metrics));
+    renderAllMetrics();
+    statusEl.textContent = `Sincronizado — ${updated} plataforma(s) actualizadas desde Airtable.`;
+  } catch(e){
+    statusEl.textContent = 'Error al sincronizar: ' + e.message;
+  }
+}
+
+document.getElementById('airtable-sync-semana').onclick = () => syncFromAirtable('week');
+document.getElementById('airtable-sync-mes').onclick = () => syncFromAirtable('month');
+
+/* ============ ESTADO ============ */
+let clipsCount = 0;
+let clipsGrids = {};   // { "2026-09": [[bool,bool,bool], ...] }
+let clipsGoal = 14;
+let period = 'week';
+let P = {series:[], cur:null, prev:null};
+let metrics = {ig:blankPlat(), tt:blankPlat(), yt:blankPlat()};
+let goals = {ig:10000, tt:10000, yt:5000, total:25000};
+let weekLabel = '';
+let monthLabel = '';
+let weekDate = '';
+let historial = [];
+let ideasData = [];
+let refsData = [];
+let bestVideos = [];
+
+/* ============ HELPERS DE MÉTRICAS ============ */
+function interOf(mp){
+  if(!mp) return 0;
+  const hasNew = INTER.some(f => mp[f.id] != null);
+  const base = hasNew ? INTER.reduce((a,f) => a + (mp[f.id]||0), 0) : (mp.interacciones || 0);
+  return base + (mp._legacy || 0);
+}
+function fieldOf(mp, field){
+  if(!mp) return 0;
+  if(field === 'interacciones') return interOf(mp);
+  if(field === 'er'){ const v = mp.vistas||0; return v ? +((interOf(mp)/v*100).toFixed(2)) : 0; }
+  return mp[field] || 0;
+}
+function totalOf(field, src){
+  const m = src || metrics;
+  if(field === 'er'){
+    const v = PLATFORMS.reduce((a,p) => a + (m[p.id].vistas||0), 0);
+    const i = PLATFORMS.reduce((a,p) => a + interOf(m[p.id]), 0);
+    return v ? +((i/v*100).toFixed(2)) : 0;
+  }
+  return PLATFORMS.reduce((a,p) => a + fieldOf(m[p.id], field), 0);
+}
+
+/* ============ TABS ============ */
+document.querySelectorAll('.tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById('view-' + tab.dataset.tab).classList.add('active');
+  });
+});
+
+/* ============ VIDEOS (calendario mensual, arranca el día 1) ============ */
+const SLOTS_PER_DAY = 3;
+
+// el mes que se muestra sale del campo "Fecha"
+function gridBaseDate(){ return new Date((weekDate || todayISO()) + 'T12:00:00'); }
+function diasDelMes(y, m){ return new Date(y, m+1, 0).getDate(); }
+function gridKey(){
+  const d = gridBaseDate();
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
+}
+function blankClipsGrid(){
+  const d = gridBaseDate();
+  return Array.from({length: diasDelMes(d.getFullYear(), d.getMonth())}, () => Array(SLOTS_PER_DAY).fill(false));
+}
+// clipsGrid guarda un mes; clipsGrids todos, indexados por "YYYY-MM"
+function gridDelMes(){
+  const k = gridKey();
+  if(!clipsGrids[k] || !Array.isArray(clipsGrids[k])) clipsGrids[k] = blankClipsGrid();
+  const esperado = diasDelMes(gridBaseDate().getFullYear(), gridBaseDate().getMonth());
+  while(clipsGrids[k].length < esperado) clipsGrids[k].push(Array(SLOTS_PER_DAY).fill(false));
+  clipsGrids[k].length = esperado;
+  return clipsGrids[k];
+}
+
+// lunes–domingo de la semana que contiene la fecha cargada
+function semanaActiva(){
+  const b = gridBaseDate();
+  const dow = b.getDay(), offset = dow === 0 ? 6 : dow - 1;
+  const lunes = new Date(b.getFullYear(), b.getMonth(), b.getDate() - offset);
+  const domingo = new Date(lunes.getFullYear(), lunes.getMonth(), lunes.getDate() + 6);
+  return [lunes, domingo];
+}
+function diaEnSemanaActiva(dia){
+  const b = gridBaseDate();
+  const fecha = new Date(b.getFullYear(), b.getMonth(), dia);
+  const [ini, fin] = semanaActiva();
+  return fecha >= new Date(ini.getFullYear(),ini.getMonth(),ini.getDate())
+      && fecha <= new Date(fin.getFullYear(),fin.getMonth(),fin.getDate());
+}
+// días que cuentan según se vaya a cerrar semana o mes
+function diasDelPeriodo(){
+  const grid = gridDelMes();
+  const idx = grid.map((_,i) => i+1);
+  return closeMode === 'month' ? idx : idx.filter(diaEnSemanaActiva);
+}
+
+function recomputeClipsCountFromGrid(){
+  const grid = gridDelMes();
+  clipsCount = diasDelPeriodo().reduce((a,d) => a + grid[d-1].filter(Boolean).length, 0);
+}
+function daysWithAtLeastOne(){
+  const grid = gridDelMes();
+  return diasDelPeriodo().filter(d => grid[d-1].some(Boolean)).length;
+}
+function currentStreak(){
+  const grid = gridDelMes();
+  const b = gridBaseDate(), hoy = new Date();
+  // la racha se cuenta hacia atrás desde hoy (o desde el último día del mes si es un mes pasado)
+  const mismoMes = hoy.getFullYear() === b.getFullYear() && hoy.getMonth() === b.getMonth();
+  let desde = mismoMes ? hoy.getDate() : grid.length;
+  const validos = new Set(diasDelPeriodo());
+  let streak = 0;
+  for(let d = desde; d >= 1; d--){
+    if(!validos.has(d)) continue;
+    if(grid[d-1] && grid[d-1].some(Boolean)) streak++;
+    else break;
+  }
+  return streak;
+}
+
+function renderDayGrid(){
+  const cont = document.getElementById('day-grid');
+  const grid = gridDelMes();
+  const b = gridBaseDate();
+  const y = b.getFullYear(), m = b.getMonth();
+  const hoy = new Date();
+  const esMesActual = hoy.getFullYear() === y && hoy.getMonth() === m;
+  const modoSemana = closeMode !== 'month';
+
+  // el 1° cae en su día real de la semana (lunes primero)
+  const dow1 = new Date(y, m, 1).getDay();
+  const huecos = dow1 === 0 ? 6 : dow1 - 1;
+
+  let html = `<div class="cal-head">${DAYS.map(d => `<span>${d}</span>`).join('')}</div><div class="cal-grid">`;
+  for(let i = 0; i < huecos; i++) html += '<div class="cal-cell empty"></div>';
+
+  grid.forEach((day, i) => {
+    const dia = i + 1;
+    const filled = day.filter(Boolean).length;
+    const esHoy = esMesActual && hoy.getDate() === dia;
+    const enSemana = modoSemana && diaEnSemanaActiva(dia);
+    const apagado = modoSemana && !enSemana;
+    html += `<div class="cal-cell${esHoy ? ' today' : ''}${enSemana ? ' in-week' : ''}${apagado ? ' off' : ''}">
+        <div class="cal-day"><span class="dn">${dia}</span><span class="cnt">${filled}/${SLOTS_PER_DAY}</span></div>
+        <div class="cal-slots">
+          ${day.map((on, s) => `<span class="cal-slot${s>0?' extra':''}${on?' filled':''}" data-d="${dia}" data-s="${s}" title="${s===0?'Mínimo diario':'Extra'}">${on?'✓':(s===0?'·':'+')}</span>`).join('')}
+        </div>
+      </div>`;
+  });
+  html += '</div>';
+  cont.innerHTML = html;
+
+  cont.querySelectorAll('.cal-slot').forEach(el => {
+    el.onclick = () => toggleSlot(+el.dataset.d - 1, +el.dataset.s);
+  });
+}
+
+async function toggleSlot(dayIdx, slotIdx){
+  const grid = gridDelMes();
+  if(!grid[dayIdx]) return;
+  grid[dayIdx][slotIdx] = !grid[dayIdx][slotIdx];
+  recomputeClipsCountFromGrid();
+  await saveClips();
+  renderClips();
+}
+
+function renderStreakRow(){
+  const row = document.getElementById('streak-row');
+  const isMonth = closeMode === 'month';
+  const falta = Math.max(0, clipsGoal - clipsCount);
+  const totalDias = diasDelPeriodo().length || 1;
+  const b = gridBaseDate(), hoy = new Date();
+  const mismoMes = hoy.getFullYear() === b.getFullYear() && hoy.getMonth() === b.getMonth();
+  const diasRestantes = Math.max(1, isMonth
+    ? (mismoMes ? diasDelMes(b.getFullYear(), b.getMonth()) - hoy.getDate() + 1 : totalDias)
+    : totalDias);
+
+  row.innerHTML = `
+    <div class="mini-stat"><div class="k">Días con al menos 1</div><div class="v">${daysWithAtLeastOne()}/${totalDias}</div></div>
+    <div class="mini-stat"><div class="k">Promedio por día</div><div class="v">${(clipsCount/totalDias).toFixed(1)}</div></div>
+    <div class="mini-stat"><div class="k">Racha actual</div><div class="v">${currentStreak()} días</div></div>
+    <div class="mini-stat"><div class="k">${falta === 0 ? 'Meta' : 'Faltan para la meta'}</div><div class="v">${falta === 0 ? 'listo' : falta}</div></div>`;
+}
+
+function renderClips(){
+  recomputeClipsCountFromGrid();
+  const done = clipsCount;
+  const pct = clipsGoal ? Math.min(100, Math.round((done/clipsGoal)*100)) : 0;
+
+  document.getElementById('clips-done').textContent = done;
+  document.getElementById('clips-count-input').value = done;
+  document.getElementById('clips-bar').style.width = pct + '%';
+  document.getElementById('clips-pct').textContent = pct + '%';
+
+  // el calendario se muestra siempre; el contador manual ya no hace falta
+  document.getElementById('clip-counter').style.display = 'none';
+  document.getElementById('count-cap-text').style.display = 'none';
+  const b = gridBaseDate();
+  document.getElementById('cal-month-label').textContent = `${MESES_LARGOS[b.getMonth()]} ${b.getFullYear()}`;
+  renderDayGrid();
+  renderStreakRow();
+}
+async function saveClips(){
+  await store.set(K.clips, String(clipsCount));
+  await store.set(K.clipsGrid, JSON.stringify(clipsGrids));
+}
+
+async function setClips(n){
+  clipsCount = Math.max(0, parseInt(n) || 0);
+  await saveClips();
+  renderClips();
+}
+/* ============ MEJORES VIDEOS (subida directa + métricas a mano) ============ */
+async function saveBestVideos(){
+  const meta = bestVideos.map(v => ({id:v.id, title:v.title, platform:v.platform, metrics:v.metrics, addedAt:v.addedAt}));
+  await store.set(K.bestVideos, JSON.stringify(meta));
+}
+
+async function addBestVideoFile(file){
+  const id = 'bv_' + Date.now() + '_' + Math.random().toString(36).slice(2,8);
+  await bvSaveBlob(id, file);
+  bestVideos.unshift({
+    id, title: file.name.replace(/\.[^/.]+$/, ''), platform: 'ig',
+    metrics: {vistas:0, megusta:0, compartidos:0, guardados:0, comentarios:0},
+    addedAt: Date.now()
+  });
+  await saveBestVideos();
+  renderBestVideos();
+}
+
+function bvEngagement(m){
+  const inter = (m.megusta||0)+(m.compartidos||0)+(m.guardados||0)+(m.comentarios||0);
+  return m.vistas ? +((inter/m.vistas*100).toFixed(2)) : 0;
+}
+
+async function renderBestVideos(){
+  const grid = document.getElementById('bv-grid');
+  const empty = document.getElementById('bv-empty');
+  grid.innerHTML = '';
+  if(!bestVideos.length){ empty.style.display = 'block'; return; }
+  empty.style.display = 'none';
+
+  // orden por vistas, de mayor a menor — así arriba quedan los mejores
+  const sorted = [...bestVideos].sort((a,b) => (b.metrics.vistas||0) - (a.metrics.vistas||0));
+
+  const CAMPOS = [
+    ['vistas','Vistas','▶'],
+    ['megusta','Me gusta','♥'],
+    ['compartidos','Compartidos','↗'],
+    ['guardados','Guardados','⚑'],
+    ['comentarios','Comentarios','✎']
+  ];
+  const BV_SHADES = ['#8FF0C8','#34D399','#10B981','#0B7D5E'];
+
+  sorted.forEach((v, idx) => {
+    const card = document.createElement('div');
+    card.className = 'bv-card';
+    const inter = CAMPOS.slice(1).reduce((a,[f]) => a + (v.metrics[f]||0), 0);
+    card.innerHTML = `
+      <div class="bv-player"><video controls playsinline></video></div>
+      <div class="bv-right">
+        <div class="bv-head">
+          <div class="bv-rank ${idx > 2 ? 'muted' : ''}" title="Puesto por vistas">${idx+1}</div>
+          <input class="fld bv-title bv-title-inp" value="${v.title.replace(/"/g,'&quot;')}">
+          <select class="fld bv-platform" style="width:118px;">
+            <option value="ig" ${v.platform==='ig'?'selected':''}>Instagram</option>
+            <option value="tt" ${v.platform==='tt'?'selected':''}>TikTok</option>
+            <option value="yt" ${v.platform==='yt'?'selected':''}>YouTube</option>
+          </select>
+          <button class="bv-del bv-del-btn" title="Eliminar">✕</button>
+        </div>
+
+        <div class="bv-hero">
+          <div>
+            <div class="bv-hero-k">Tasa de interacción</div>
+            <div class="bv-hero-v">${bvEngagement(v.metrics)}%</div>
+          </div>
+          <div class="bv-hero-note">
+            <b>${fmt(inter)}</b> interacciones<br>
+            sobre <b>${fmt(v.metrics.vistas||0)}</b> vistas
+          </div>
+        </div>
+
+        <div class="bv-stats">
+          ${CAMPOS.map(([f,label,icon]) => `
+            <div class="bv-stat">
+              <div class="bv-stat-k"><i>${icon}</i>${label}</div>
+              <input type="text" inputmode="numeric" class="bv-stat-v bv-metric" data-field="${f}" value="${fmt(v.metrics[f]||0)}">
+            </div>
+          `).join('')}
+        </div>
+
+        <div class="bv-break">
+          <div class="bv-break-k">Composición de las interacciones</div>
+          <div class="bv-break-bar">
+            ${CAMPOS.slice(1).map(([f,label],i) => {
+              const val = v.metrics[f]||0;
+              const pctSeg = inter ? (val/inter*100) : 0;
+              return `<span style="width:${pctSeg}%; background:${BV_SHADES[i]};" title="${label}: ${fmt(val)}"></span>`;
+            }).join('')}
+          </div>
+          <div class="bv-break-legend">
+            ${CAMPOS.slice(1).map(([f,label],i) => {
+              const val = v.metrics[f]||0;
+              const pctSeg = inter ? Math.round(val/inter*100) : 0;
+              return `<span><i style="background:${BV_SHADES[i]}"></i>${label} <b>${pctSeg}%</b></span>`;
+            }).join('')}
+          </div>
+        </div>
+
+        <div class="bv-foot">Subido el ${new Date(v.addedAt).toLocaleDateString('es-ES',{day:'2-digit',month:'short',year:'numeric'})}</div>
+      </div>`;
+
+    const videoEl = card.querySelector('video');
+    bvGetBlob(v.id).then(blob => { if(blob) videoEl.src = URL.createObjectURL(blob); });
+
+    card.querySelector('.bv-title').addEventListener('change', async (e) => {
+      v.title = e.target.value.trim() || v.title;
+      await saveBestVideos();
+    });
+    card.querySelector('.bv-platform').addEventListener('change', async (e) => {
+      v.platform = e.target.value;
+      await saveBestVideos();
+    });
+    card.querySelectorAll('.bv-metric').forEach(inp => {
+      // al enfocar mostramos el número crudo, así es cómodo de editar
+      inp.addEventListener('focus', (e) => {
+        e.target.value = String(v.metrics[e.target.dataset.field] || 0);
+        e.target.select();
+      });
+      inp.addEventListener('change', async (e) => {
+        const limpio = String(e.target.value).replace(/[^\d]/g,'');
+        v.metrics[e.target.dataset.field] = Math.max(0, parseInt(limpio) || 0);
+        await saveBestVideos();
+        renderBestVideos();
+      });
+    });
+    card.querySelector('.bv-del').onclick = async () => {
+      if(!confirm('¿Eliminar este video? No se puede deshacer.')) return;
+      await bvDeleteBlob(v.id);
+      bestVideos = bestVideos.filter(x => x.id !== v.id);
+      await saveBestVideos();
+      renderBestVideos();
+    };
+
+    grid.appendChild(card);
+  });
+}
+
+document.getElementById('bv-upload-btn').onclick = () => document.getElementById('bv-file-input').click();
+document.getElementById('bv-file-input').addEventListener('change', async (e) => {
+  const file = e.target.files[0];
+  if(file) await addBestVideoFile(file);
+  e.target.value = '';
+});
+
+document.getElementById('clip-plus').onclick = () => setClips(clipsCount + 1);
+document.getElementById('clip-minus').onclick = () => setClips(clipsCount - 1);
+document.getElementById('clips-count-input').addEventListener('change', (e) => setClips(e.target.value));
+
+document.getElementById('clips-goal-input').addEventListener('change', async (e) => {
+  clipsGoal = Math.max(1, parseInt(e.target.value) || 14);
+  e.target.value = clipsGoal;
+  await store.set(K.clipsGoal, String(clipsGoal));
+  renderClips();
+});
+
+/* ============ PERIODOS ============ */
+function lastSnapshot(){ return historial.length ? historial[historial.length-1] : null; }
+
+function periodKey(ts){
+  const d = new Date(ts);
+  if(period === 'month') return d.getFullYear()+'-M'+d.getMonth();
+  return d.getFullYear()+'-Q'+Math.floor(d.getMonth()/3);
+}
+function periodLabel(ts){
+  const d = new Date(ts);
+  if(period === 'month') return MESES[d.getMonth()]+' '+String(d.getFullYear()).slice(2);
+  return 'T'+(Math.floor(d.getMonth()/3)+1)+' '+String(d.getFullYear()).slice(2);
+}
+
+// suma las métricas aditivas de varias semanas; los seguidores son el último dato cargado
+function aggregate(list){
+  const out = {ig:blankPlat(), tt:blankPlat(), yt:blankPlat()};
+  PLATFORMS.forEach(p => {
+    let ultimoSeg = 0, legacy = 0;
+    list.forEach(e => {
+      const m = e.metrics[p.id] || {};
+      out[p.id].vistas += (m.vistas||0);
+      const hasNew = INTER.some(f => m[f.id] != null);
+      if(hasNew) INTER.forEach(f => { out[p.id][f.id] += (m[f.id]||0); });
+      else legacy += (m.interacciones||0);
+      if(m.seguidores) ultimoSeg = m.seguidores;
+    });
+    out[p.id].seguidores = ultimoSeg;
+    if(legacy) out[p.id]._legacy = legacy;
+  });
+  return out;
+}
+
+function weekEntries(){
+  const list = historial.map(h => ({
+    label: h.weekLabel || new Date(h.closedAt).toLocaleDateString('es-ES',{day:'2-digit',month:'short'}),
+    at: h.closedAt, metrics: h.metrics, clips: h.clips || 0
+  }));
+  const etiquetaActual = (closeMode === 'month' ? monthLabel : weekLabel) || 'Actual';
+  list.push({label: etiquetaActual, at: weekDateMs(), metrics: metrics, clips: clipsCount});
+  return list;
+}
+
+function refreshPeriods(){
+  const entries = weekEntries();
+  let series;
+  if(period === 'week'){
+    series = entries.map((e,i) => ({label:e.label, at:e.at, metrics:e.metrics, clips:e.clips, weeks:1, current:i === entries.length-1}));
+  } else {
+    const map = new Map();
+    entries.forEach(e => {
+      const k = periodKey(e.at);
+      if(!map.has(k)) map.set(k, {label:periodLabel(e.at), at:e.at, list:[]});
+      const g = map.get(k);
+      g.list.push(e);
+      if(e.at > g.at) g.at = e.at;
+    });
+    const arr = [...map.values()].sort((a,b) => a.at - b.at);
+    series = arr.map((g,i) => ({
+      label:g.label, at:g.at, metrics:aggregate(g.list),
+      clips: g.list.reduce((a,e) => a + (e.clips||0), 0),
+      weeks:g.list.length, current:i === arr.length-1
+    }));
+  }
+  P = {series, cur: series[series.length-1], prev: series[series.length-2] || null};
+}
+
+function renderPeriodInfo(){
+  const el = document.getElementById('period-info');
+  const w = P.cur ? P.cur.weeks : 1;
+  const nombre = P.cur ? P.cur.label : '—';
+  if(period === 'week'){
+    el.innerHTML = `Mostrando <b>${nombre}</b><br>Los datos que cargás abajo son de esta semana`;
+  } else {
+    el.innerHTML = `Mostrando <b>${nombre}</b> · ${w} ${w === 1 ? 'semana' : 'semanas'}<br>Suma de las semanas del periodo · seguidores = último dato`;
+  }
+}
+
+document.querySelectorAll('#period-ctrl .seg-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('#period-ctrl .seg-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    period = btn.dataset.period;
+    renderAllMetrics();
+  });
+});
+
+/* ============ MÉTRICAS ============ */
+
+function deltaHtml(cur, prev, suffix){
+  if(prev == null) return '<span class="delta flat">—</span>';
+  const d = +(cur - prev).toFixed(2);
+  if(d === 0) return '<span class="delta flat">=</span>';
+  const cls = d > 0 ? 'up' : 'down';
+  const arrow = d > 0 ? '▲' : '▼';
+  return '<span class="delta '+cls+'">'+arrow+' '+fmt(Math.abs(d))+(suffix||'')+'</span>';
+}
+
+function renderKpis(){
+  const M = P.cur.metrics, PV = P.prev ? P.prev.metrics : null;
+  const row = document.getElementById('kpi-row');
+  const nota = PERIOD_PREV[period];
+  const defs = [
+    {k:'Vistas totales', f:'vistas'},
+    {k:'Interacciones totales', f:'interacciones'},
+    {k:'Seguidores totales', f:'seguidores'},
+    {k:'Tasa de interacción', f:'er'},
+    {k:'Interacciones por vista', f:'ipv'}
+  ];
+  row.innerHTML = '';
+  defs.forEach(d => {
+    const box = document.createElement('div');
+    box.className = 'kpi';
+    if(d.f === 'ipv'){
+      const v = totalOf('vistas', M), i = totalOf('interacciones', M);
+      box.innerHTML = `<div class="k">${d.k}</div><div class="v">${(v ? i/v : 0).toFixed(3)}</div><div class="d">interacciones ÷ vistas</div>`;
+    } else if(d.f === 'er'){
+      const cur = totalOf('er', M);
+      const prevVal = PV ? totalOf('er', PV) : null;
+      box.innerHTML = `<div class="k">${d.k}</div><div class="v">${cur.toFixed(2)}%</div><div class="d">${deltaHtml(cur, prevVal, ' pts')} <span>${nota}</span></div>`;
+    } else {
+      const cur = totalOf(d.f, M);
+      const prevVal = PV ? totalOf(d.f, PV) : null;
+      box.innerHTML = `<div class="k">${d.k}</div><div class="v">${fmt(cur)}</div><div class="d">${deltaHtml(cur, prevVal)} <span>${nota}</span></div>`;
+    }
+    row.appendChild(box);
+  });
+}
+
+function renderMetrics(){
+  const editable = period === 'week';
+  const M = P.cur.metrics, PV = P.prev ? P.prev.metrics : null;
+  const grid = document.getElementById('metrics-grid');
+  grid.innerHTML = '';
+
+  PLATFORMS.forEach(p => {
+    const mp = M[p.id];
+    const prevMp = PV ? PV[p.id] : null;
+    const inter = interOf(mp);
+    const er = mp.vistas ? (inter/mp.vistas*100) : 0;
+
+    const rowHtml = (label, field, gl) => `
+      <div class="metric-row">
+        <span class="metric-label">${gl ? '<span class="gl">'+gl+'</span>' : ''}${label}</span>
+        <div class="metric-right">
+          ${deltaHtml(mp[field]||0, prevMp ? fieldOf(prevMp, field) : null)}
+          ${editable
+            ? `<input class="fld metric-input" type="number" min="0" step="1" data-p="${p.id}" data-f="${field}" value="${mp[field]||0}">`
+            : `<div class="ro-val">${fmt(mp[field]||0)}</div>`}
+        </div>
+      </div>`;
+
+    let interRows = '';
+    INTER.forEach(f => { interRows += rowHtml(f.label, f.id, f.gl); });
+
+    let segs = '', legend = '';
+    INTER.forEach(f => {
+      const share = inter ? ((mp[f.id]||0)/inter*100) : 0;
+      segs += `<div class="seg" style="width:${share}%; background:${f.shade}" title="${f.label}: ${share.toFixed(1)}%"></div>`;
+      legend += `<span><i style="background:${f.shade}"></i>${f.label} ${inter ? share.toFixed(0) : 0}%</span>`;
+    });
+
+    const card = document.createElement('div');
+    card.className = 'metric-card';
+    card.innerHTML = `
+      <div class="mc-head">
+        <div class="mc-name"><span class="dot2"></span>${p.name}</div>
+        <div class="mc-er"><b>${er.toFixed(2)}%</b>tasa de interacción</div>
+      </div>
+      <div class="mc-section">
+        ${rowHtml('Vistas','vistas')}
+        ${rowHtml('Seguidores','seguidores')}
+      </div>
+      <div class="mc-section alt">
+        <div class="mc-sec-title"><span>Interacciones</span><b>${fmt(inter)}</b></div>
+        ${interRows}
+      </div>
+      <div class="stack-wrap">
+        <div class="stack">${inter ? segs : '<div class="seg" style="width:100%; background:rgba(251,191,36,.12)"></div>'}</div>
+        <div class="stack-legend">${legend}</div>
+      </div>`;
+    grid.appendChild(card);
+  });
+
+  grid.querySelectorAll('.metric-input').forEach(inp => {
+    inp.addEventListener('change', async () => {
+      const v = Math.max(0, parseInt(inp.value) || 0);
+      inp.value = v;
+      metrics[inp.dataset.p][inp.dataset.f] = v;
+      await store.set(K.metrics, JSON.stringify(metrics));
+      renderAllMetrics();
+    });
+  });
+}
+
+function renderBreakdown(){
+  const M = P.cur.metrics;
+  const wrap = document.getElementById('breakdown-wrap');
+  const grand = totalOf('interacciones', M);
+  let rows = '';
+
+  INTER.forEach(f => {
+    const tot = totalOf(f.id, M);
+    const share = grand ? (tot/grand*100) : 0;
+    rows += `<tr>
+      <td>${f.label}</td>
+      ${PLATFORMS.map(p => '<td>'+fmt(M[p.id][f.id]||0)+'</td>').join('')}
+      <td>${fmt(tot)}</td>
+      <td><div class="bd-share"><div class="mini-track"><div class="mini-fill" style="width:${share}%"></div></div><span>${share.toFixed(1)}%</span></div></td>
+    </tr>`;
+  });
+
+  rows += `<tr class="tot">
+    <td>Total interacciones</td>
+    ${PLATFORMS.map(p => '<td>'+fmt(interOf(M[p.id]))+'</td>').join('')}
+    <td>${fmt(grand)}</td><td>100%</td>
+  </tr>`;
+
+  rows += `<tr>
+    <td style="color:var(--text-dim)">Tasa de interacción</td>
+    ${PLATFORMS.map(p => '<td>'+fieldOf(M[p.id],'er').toFixed(2)+'%</td>').join('')}
+    <td>${totalOf('er', M).toFixed(2)}%</td><td>—</td>
+  </tr>`;
+
+  wrap.innerHTML = `<table class="bd-table">
+    <thead><tr><th>Tipo</th>${PLATFORMS.map(p => '<th>'+p.name+'</th>').join('')}<th>Total</th><th style="text-align:right">% del total</th></tr></thead>
+    <tbody>${rows}</tbody>
+  </table>`;
+}
+
+/* ============ CHART ============ */
+function renderChart(){
+  const metric = document.getElementById('chart-metric').value;
+  const plat = document.getElementById('chart-platform').value;
+  const wrap = document.getElementById('chart-wrap');
+  const isPct = metric === 'er';
+  const valFor = (m) => plat === 'all' ? totalOf(metric, m) : fieldOf(m[plat], metric);
+
+  const series = P.series.slice(-10).map(g => ({label:g.label, value: valFor(g.metrics), current:g.current}));
+
+  if(series.every(s => !s.value)){
+    wrap.innerHTML = '<div class="chart-empty">Todavía no hay datos cargados para mostrar.</div>';
+    return;
+  }
+
+  const max = Math.max(...series.map(s => s.value), 0.0001);
+  let html = '<div class="chart">';
+  series.forEach(s => {
+    const h = Math.max(4, Math.round((s.value/max)*100));
+    const label = isPct ? s.value.toFixed(2)+'%' : fmt(s.value);
+    html += `<div class="chart-col${s.current?' current':''}">
+      <div class="chart-val">${label}</div>
+      <div class="chart-bar" style="height:${h}%"></div>
+      <div class="chart-lbl" title="${s.label}">${s.label}</div>
+    </div>`;
+  });
+  wrap.innerHTML = html + '</div>';
+}
+document.getElementById('chart-metric').addEventListener('change', renderChart);
+document.getElementById('chart-platform').addEventListener('change', renderChart);
+
+function renderAllMetrics(){
+  refreshPeriods(); renderPeriodInfo();
+  renderKpis(); renderMetrics(); renderBreakdown(); renderGoals(); renderChart();
+}
+
+/* ============ OBJETIVOS ============ */
+function renderGoals(){
+  const grid = document.getElementById('goals-grid');
+  grid.innerHTML = '';
+  const prev = lastSnapshot();
+  const cards = PLATFORMS.map(p => ({
+    id:p.id, name:p.name, current:metrics[p.id].seguidores||0,
+    prev: prev ? (prev.metrics[p.id].seguidores||0) : null, cls:''
+  }));
+  cards.push({
+    id:'total', name:'Total — las 3 plataformas', current:totalOf('seguidores'),
+    prev: prev ? totalOf('seguidores', prev.metrics) : null, cls:'total'
+  });
+
+  cards.forEach(c => {
+    const meta = goals[c.id] || 0;
+    const pct = meta ? Math.min(100, Math.round((c.current/meta)*100)) : 0;
+    const falta = Math.max(0, meta - c.current);
+    const card = document.createElement('div');
+    card.className = 'goal-card ' + c.cls;
+    card.innerHTML = `
+      <div class="goal-head">
+        <div class="goal-name"><span class="dot2"></span>${c.name}</div>
+        <div class="goal-pct">${pct}%</div>
+      </div>
+      <div class="goal-nums">
+        <span class="goal-cur">${fmt(c.current)}</span>
+        <span class="goal-sep">seguidores</span>
+        <span style="margin-left:auto">${deltaHtml(c.current, c.prev)}</span>
+      </div>
+      <div class="bar-track"><div class="bar-fill" style="width:${pct}%"></div></div>
+      <div class="goal-meta-wrap">
+        <span>Meta:</span>
+        <input class="fld goal-meta-input" type="number" min="0" data-goal="${c.id}" value="${meta}">
+      </div>
+      <div class="goal-foot">${falta > 0 ? 'Faltan <b>'+fmt(falta)+'</b> seguidores' : 'Objetivo alcanzado'}</div>`;
+    grid.appendChild(card);
+  });
+
+  grid.querySelectorAll('.goal-meta-input').forEach(inp => {
+    inp.addEventListener('change', async () => {
+      goals[inp.dataset.goal] = Math.max(0, parseInt(inp.value) || 0);
+      await store.set(K.goals, JSON.stringify(goals));
+      renderGoals();
+    });
+  });
+}
+
+/* ============ IDEAS & REFERENCIAS ============ */
+function renderIdeas(){
+  const list = document.getElementById('ideas-list');
+  list.innerHTML = '';
+  if(!ideasData.length){ list.innerHTML = '<div class="empty-state">Todavía no hay ideas anotadas.</div>'; return; }
+  ideasData.slice().reverse().forEach(item => {
+    const row = document.createElement('div');
+    row.className = 'entry';
+    const date = new Date(item.createdAt);
+    row.innerHTML = `<div class="entry-body"><div class="entry-text"></div><div class="entry-meta">${date.toLocaleDateString('es-ES')} ${date.toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'})}</div></div><div class="entry-del">✕</div>`;
+    row.querySelector('.entry-text').textContent = item.text;
+    row.querySelector('.entry-del').onclick = async () => {
+      ideasData = ideasData.filter(i => i.id !== item.id);
+      await store.set(K.ideas, JSON.stringify(ideasData)); renderIdeas();
+    };
+    list.appendChild(row);
+  });
+}
+function renderRefs(){
+  const list = document.getElementById('refs-list');
+  list.innerHTML = '';
+  if(!refsData.length){ list.innerHTML = '<div class="empty-state">Todavía no hay referencias guardadas.</div>'; return; }
+  refsData.slice().reverse().forEach(item => {
+    const row = document.createElement('div');
+    row.className = 'entry';
+    const date = new Date(item.createdAt);
+    row.innerHTML = `<div class="entry-body"><a class="entry-link" target="_blank" rel="noopener"></a><div class="entry-label"></div><div class="entry-meta">${date.toLocaleDateString('es-ES')}</div></div><div class="entry-del">✕</div>`;
+    const linkEl = row.querySelector('.entry-link');
+    linkEl.href = item.url; linkEl.textContent = item.url;
+    row.querySelector('.entry-label').textContent = item.label || '';
+    row.querySelector('.entry-del').onclick = async () => {
+      refsData = refsData.filter(i => i.id !== item.id);
+      await store.set(K.refs, JSON.stringify(refsData)); renderRefs();
+    };
+    list.appendChild(row);
+  });
+}
+document.getElementById('idea-add').onclick = async () => {
+  const input = document.getElementById('idea-input');
+  const text = input.value.trim();
+  if(!text) return;
+  ideasData.push({id: Date.now()+Math.random(), text, createdAt: Date.now()});
+  input.value = '';
+  await store.set(K.ideas, JSON.stringify(ideasData)); renderIdeas();
+};
+document.getElementById('ref-add').onclick = async () => {
+  const urlInput = document.getElementById('ref-url');
+  const labelInput = document.getElementById('ref-label');
+  const url = urlInput.value.trim();
+  if(!url) return;
+  refsData.push({id: Date.now()+Math.random(), url, label: labelInput.value.trim(), createdAt: Date.now()});
+  urlInput.value = ''; labelInput.value = '';
+  await store.set(K.refs, JSON.stringify(refsData)); renderRefs();
+};
+
+/* ============ SEMANA & HISTORIAL ============ */
+document.getElementById('week-label-input').addEventListener('change', async (e) => {
+  weekLabel = e.target.value.trim();
+  await store.set(K.week, weekLabel);
+  renderChart();
+});
+document.getElementById('month-label-input').addEventListener('change', async (e) => {
+  monthLabel = e.target.value.trim();
+  await store.set(K.monthLabel, monthLabel);
+  renderChart();
+});
+document.getElementById('week-date-input').addEventListener('change', async (e) => {
+  weekDate = e.target.value || todayISO();
+  await store.set(K.weekDate, weekDate);
+  renderAllMetrics();
+});
+
+// si la entrada es vieja y no tiene 'tipo', lo deducimos del nombre (ej: "Agosto 2026" = mes)
+const RE_MES = /^(enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|setiembre|octubre|noviembre|diciembre)\b/i;
+function tipoDe(entry){
+  if(entry.tipo) return entry.tipo;
+  return RE_MES.test((entry.weekLabel||'').trim()) ? 'month' : 'week';
+}
+
+function renderHistorial(){
+  const body = document.getElementById('historial-body');
+  if(!historial.length){
+    body.innerHTML = '<tr><td colspan="8" style="text-align:center; font-style:italic; color:var(--text-faint);">Todavía no cerraste ningún periodo.</td></tr>';
+    return;
+  }
+  body.innerHTML = '';
+  historial.map((entry, idx) => ({entry, idx})).slice().reverse().forEach(({entry, idx}) => {
+    const row = document.createElement('tr');
+    const date = new Date(entry.closedAt);
+
+    if(entry._editing){
+      row.innerHTML = `
+        <td><input class="fld hist-week-input" value="${entry.weekLabel || ''}"></td>
+        <td>${date.toLocaleDateString('es-ES')}</td>
+        <td colspan="5" style="font-style:italic; color:var(--text-faint)">Editá el nombre del periodo</td>
+        <td><div class="hist-actions"><button class="hist-btn save">Guardar</button><button class="hist-btn cancel">Cancelar</button></div></td>`;
+      const input = row.querySelector('input');
+      row.querySelector('.save').onclick = async () => {
+        historial[idx].weekLabel = input.value.trim();
+        delete historial[idx]._editing;
+        await store.set(K.hist, JSON.stringify(historial));
+        renderHistorial(); renderChart();
+      };
+      row.querySelector('.cancel').onclick = () => { delete historial[idx]._editing; renderHistorial(); };
+      body.appendChild(row);
+      return;
+    }
+
+    const esMes = tipoDe(entry) === 'month';
+    row.innerHTML = `
+      <td><div class="hist-week${entry._open?' open':''}"><span class="caret">▶</span><span class="wk"></span><span class="hist-tag ${esMes?'mes':''}">${esMes?'Mes':'Semana'}</span></div></td>
+      <td>${date.toLocaleDateString('es-ES')}</td>
+      <td class="n">${entry.clips}/${entry.clipsGoal}</td>
+      <td class="n">${fmt(totalOf('vistas', entry.metrics))}</td>
+      <td class="n">${fmt(totalOf('interacciones', entry.metrics))}</td>
+      <td class="n">${fmt(totalOf('seguidores', entry.metrics))}</td>
+      <td class="n">${totalOf('er', entry.metrics).toFixed(2)}%</td>
+      <td><div class="hist-actions"><button class="hist-btn edit">Renombrar</button><button class="hist-btn del">Borrar</button></div></td>`;
+    row.querySelector('.wk').textContent = entry.weekLabel || '(sin nombre)';
+    row.querySelector('.hist-week').onclick = () => { historial[idx]._open = !historial[idx]._open; renderHistorial(); };
+    row.querySelector('.edit').onclick = () => { historial[idx]._editing = true; renderHistorial(); };
+    let delConfirm = false;
+    const delBtn = row.querySelector('.del');
+    delBtn.onclick = async () => {
+      if(!delConfirm){
+        delConfirm = true; delBtn.textContent = '¿Seguro?';
+        setTimeout(() => { delConfirm = false; delBtn.textContent = 'Borrar'; }, 3000);
+        return;
+      }
+      historial.splice(idx, 1);
+      await store.set(K.hist, JSON.stringify(historial));
+      renderHistorial(); renderAllMetrics();
+    };
+    body.appendChild(row);
+
+    if(entry._open){
+      const det = document.createElement('tr');
+      det.className = 'detail-row';
+      let boxes = '';
+      PLATFORMS.forEach(p => {
+        const m = entry.metrics[p.id];
+        boxes += `<div class="detail-box">
+          <div class="dn">${p.name}</div>
+          <div class="dl"><span>Vistas</span><b>${fmt(m.vistas)}</b></div>
+          <div class="dl"><span>Seguidores</span><b>${fmt(m.seguidores)}</b></div>
+          ${INTER.map(f => '<div class="dl"><span>'+f.label+'</span><b>'+fmt(m[f.id]||0)+'</b></div>').join('')}
+          <div class="dl sep"><span>Interacciones</span><b>${fmt(interOf(m))}</b></div>
+          <div class="dl"><span>Tasa de interacción</span><b>${fieldOf(m,'er').toFixed(2)}%</b></div>
+        </div>`;
+      });
+      det.innerHTML = `<td colspan="8"><div class="detail-inner">${boxes}</div></td>`;
+      body.appendChild(det);
+    }
+  });
+}
+
+let closeMode = 'week';
+
+function updateModeLabels(){
+  const isMonth = closeMode === 'month';
+  // los dos campos quedan siempre visibles; se atenúa el que no se va a cerrar
+  document.getElementById('grp-week').classList.toggle('dim', isMonth);
+  document.getElementById('grp-month').classList.toggle('dim', !isMonth);
+  document.getElementById('week-date-label').textContent = isMonth ? 'Fecha del mes:' : 'Fecha de la semana:';
+  document.getElementById('clips-period-label').textContent = isMonth ? 'videos subidos este mes' : 'videos subidos esta semana';
+  document.getElementById('clips-goal-label').textContent = isMonth ? 'Meta mensual:' : 'Meta semanal:';
+  document.getElementById('count-cap-text').textContent = isMonth
+    ? 'Videos subidos este mes — usá los botones o escribí el número'
+    : 'Videos subidos esta semana — usá los botones o escribí el número';
+  document.getElementById('clip-hint').textContent = isMonth
+    ? 'Definí tu meta mensual escribiendo el número y andá sumando los videos a medida que los subís. Al cerrar el mes el total queda archivado en el Historial y el contador vuelve a cero.'
+    : 'Cada día tiene 3 espacios: el primero (borde punteado) es el mínimo diario, los otros dos son los extras. Hacé click para marcar cada video subido.';
+  const tabBtn = document.querySelector('.tab[data-tab="semana"]');
+  if(tabBtn) tabBtn.textContent = isMonth ? 'Mi Mes' : 'Mi Semana';
+  if(typeof renderClips === 'function') renderClips();
+}
+
+document.querySelectorAll('#close-mode-ctrl .seg-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('#close-mode-ctrl .seg-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    closeMode = btn.dataset.mode;
+    const closeBtn = document.getElementById('close-week-btn');
+    if(closeMode === 'month'){
+      closeBtn.textContent = closingConfirm ? '¿Confirmar cierre de mes?' : 'Cerrar mes y archivar →';
+      // si el campo de mes está vacío, lo sugerimos a partir de la fecha cargada
+      const inp = document.getElementById('month-label-input');
+      if(!inp.value.trim()){
+        const base = new Date((weekDate || todayISO())+'T12:00:00');
+        inp.value = `${MESES_LARGOS[base.getMonth()]} ${base.getFullYear()}`;
+        monthLabel = inp.value;
+        store.set(K.monthLabel, monthLabel);
+      }
+    } else {
+      closeBtn.textContent = closingConfirm ? '¿Confirmar cierre de semana?' : 'Cerrar semana y archivar →';
+    }
+    updateModeLabels();
+  });
+});
+
+let closingConfirm = false;
+document.getElementById('close-week-btn').onclick = async () => {
+  const btn = document.getElementById('close-week-btn');
+  const defaultLabel = closeMode === 'month' ? 'Cerrar mes y archivar →' : 'Cerrar semana y archivar →';
+  const confirmLabel = closeMode === 'month' ? '¿Confirmar cierre de mes?' : '¿Confirmar cierre de semana?';
+  if(!closingConfirm){
+    closingConfirm = true;
+    btn.textContent = confirmLabel;
+    btn.classList.add('confirm');
+    setTimeout(() => {
+      if(closingConfirm){
+        closingConfirm = false;
+        btn.textContent = defaultLabel;
+        btn.classList.remove('confirm');
+      }
+    }, 4000);
+    return;
+  }
+
+  historial.push({
+    id: Date.now()+Math.random(),
+    weekLabel: (closeMode === 'month' ? monthLabel : weekLabel),
+    tipo: closeMode,
+    closedAt: weekDateMs(),
+    clips: clipsCount,
+    clipsGoal: clipsGoal,
+    metrics: JSON.parse(JSON.stringify(metrics))
+  });
+  await store.set(K.hist, JSON.stringify(historial));
+
+  // limpiamos solo los días del periodo que se cerró
+  { const g = gridDelMes(); diasDelPeriodo().forEach(d => { g[d-1] = Array(SLOTS_PER_DAY).fill(false); }); }
+  clipsCount = 0;
+  await saveClips();
+  PLATFORMS.forEach(p => {
+    metrics[p.id].vistas = 0;
+    INTER.forEach(f => { metrics[p.id][f.id] = 0; });
+  });
+  await store.set(K.metrics, JSON.stringify(metrics));
+  // limpiamos solo la etiqueta del periodo que se cerró
+  if(closeMode === 'month'){
+    monthLabel = '';
+    document.getElementById('month-label-input').value = '';
+    await store.set(K.monthLabel, '');
+  } else {
+    weekLabel = '';
+    document.getElementById('week-label-input').value = '';
+    await store.set(K.week, '');
+  }
+  weekDate = todayISO();
+  document.getElementById('week-date-input').value = weekDate;
+  await store.set(K.weekDate, weekDate);
+
+  renderClips(); renderAllMetrics(); renderHistorial();
+
+  closingConfirm = false;
+  closeMode = 'week';
+  document.querySelectorAll('#close-mode-ctrl .seg-btn').forEach(b => b.classList.toggle('active', b.dataset.mode === 'week'));
+  btn.textContent = 'Cerrar semana y archivar →';
+  btn.classList.remove('confirm');
+  updateModeLabels();
+};
+
+/* ============ INIT ============ */
+(async function init(){
+  const [c, cg, m, g, w, h, i, r, bv, wd, cgr, ml] = await Promise.all([
+    store.get(K.clips), store.get(K.clipsGoal), store.get(K.metrics),
+    store.get(K.goals), store.get(K.week), store.get(K.hist),
+    store.get(K.ideas), store.get(K.refs), store.get(K.bestVideos),
+    store.get(K.weekDate), store.get(K.clipsGrid), store.get(K.monthLabel)
+  ]);
+  // migración: antes se guardaba una grilla de 7 días × 3 slots directamente en K.clips
+  if(c != null){
+    try{
+      const p = JSON.parse(c);
+      if(Array.isArray(p)) clipsCount = p.reduce((a,d) => a + (Array.isArray(d) ? d.filter(Boolean).length : 0), 0);
+      else clipsCount = Math.max(0, parseInt(p) || 0);
+    }catch(e){ clipsCount = Math.max(0, parseInt(c) || 0); }
+  }
+  clipsGrids = {};
+  try{
+    if(cgr){
+      const p = JSON.parse(cgr);
+      if(Array.isArray(p)){
+        // formato viejo: una sola grilla de 7 días → la volcamos al mes de la fecha cargada
+        const base = new Date((wd || todayISO())+'T12:00:00');
+        const k = `${base.getFullYear()}-${String(base.getMonth()+1).padStart(2,'0')}`;
+        const dias = new Date(base.getFullYear(), base.getMonth()+1, 0).getDate();
+        const nueva = Array.from({length:dias}, () => Array(SLOTS_PER_DAY).fill(false));
+        const dow1 = new Date(base.getFullYear(), base.getMonth(), 1).getDay();
+        const off = dow1 === 0 ? 6 : dow1 - 1;
+        p.forEach((d, i) => { const dia = i - off + 1; if(Array.isArray(d) && dia >= 1 && dia <= dias) nueva[dia-1] = d; });
+        clipsGrids[k] = nueva;
+      } else if(p && typeof p === 'object'){
+        clipsGrids = p;
+      }
+    }
+  }catch(e){ clipsGrids = {}; }
+  if(cg) clipsGoal = Math.max(1, parseInt(cg) || 14);
+  try{
+    if(m){
+      const p = JSON.parse(m);
+      PLATFORMS.forEach(pl => { if(p[pl.id]) metrics[pl.id] = Object.assign(blankPlat(), p[pl.id]); });
+    }
+  }catch(e){}
+  try{ if(g) goals = Object.assign(goals, JSON.parse(g)); }catch(e){}
+  weekLabel = w || '';
+  monthLabel = ml || '';
+  weekDate = wd || todayISO();
+  try{ if(h) historial = JSON.parse(h) || []; }catch(e){ historial = []; }
+  try{ if(i) ideasData = JSON.parse(i) || []; }catch(e){ ideasData = []; }
+  try{ if(r) refsData = JSON.parse(r) || []; }catch(e){ refsData = []; }
+  try{ if(bv) bestVideos = JSON.parse(bv) || []; }catch(e){ bestVideos = []; }
+
+  document.getElementById('clips-goal-input').value = clipsGoal;
+  document.getElementById('week-label-input').value = weekLabel;
+  document.getElementById('month-label-input').value = monthLabel;
+  document.getElementById('week-date-input').value = weekDate;
+  updateModeLabels();
+
+  renderClips(); renderAllMetrics(); renderIdeas(); renderRefs(); renderHistorial(); renderBestVideos();
+})();
+</script>
+</body>
+</html>
