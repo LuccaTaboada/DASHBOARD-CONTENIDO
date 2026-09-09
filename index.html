@@ -1,0 +1,3196 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>HIGHWAY COMMAND — Adrián Miller</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    /* ============================================================
+       HIGHWAY COMMAND — paleta unica.
+       Los nombres del sistema nuevo (--cyan, --lime, --panel...)
+       apuntan a nuestros dorados, asi todo su CSS se repinta solo.
+       ============================================================ */
+
+    /* superficie — negro calido */
+    --bg:#080602;
+    --bg-2:#0C0904;
+    --surface:linear-gradient(158deg, rgba(255,240,200,.045) 0%, rgba(255,240,200,.014) 55%, rgba(255,240,200,.006) 100%);
+    --surface-2:linear-gradient(158deg, rgba(255,240,200,.030) 0%, rgba(255,240,200,.007) 100%);
+    --inset:#0B0803;
+    --border:rgba(251,191,36,.14);
+    --border-str:rgba(251,191,36,.34);
+
+    /* oro / ambar */
+    --v1:#FEF3C7;
+    --v2:#FDE68A;
+    --v3:#FCD34D;
+    --v4:#FBBF24;
+    --v5:#D97706;
+    --grad:linear-gradient(120deg,#E8940C 0%,#FBBF24 45%,#FEE9A8 100%);
+    --grad-h:linear-gradient(90deg,#E8940C 0%,#FBBF24 50%,#FEE9A8 100%);
+    --grad-v:linear-gradient(180deg,#FEE9A8 0%,#FBBF24 62%,rgba(180,83,9,.20) 100%);
+    --grad-soft:linear-gradient(135deg, rgba(251,191,36,.15) 0%, rgba(253,230,138,.06) 100%);
+    --glow:0 0 24px rgba(251,191,36,.34);
+    --on-gold:#170F02;
+
+    /* verde — resultados y datos */
+    --g1:#A7F3D0;
+    --g2:#6EE7B7;
+    --g3:#34D399;
+    --g4:#10B981;
+    --grad-g:linear-gradient(90deg,#10B981 0%,#34D399 48%,#8FF0C8 100%);
+    --grad-g-v:linear-gradient(180deg,#8FF0C8 0%,#34D399 60%,rgba(6,95,70,.22) 100%);
+    --glow-g:0 0 22px rgba(52,211,153,.34);
+    --green-soft:rgba(52,211,153,.10);
+
+    /* texto — neutros calidos */
+    --text:#FBF8F1;
+    --text-dim:#B5AC97;
+    --text-faint:#7C7361;
+    --danger:#F87171;
+
+    --r-lg:18px; --r-md:13px; --r-sm:9px;
+
+    /* ---- puente: nombres del sistema nuevo -> nuestros dorados ---- */
+    --panel:rgba(20,15,4,.86);
+    --panel-2:rgba(255,240,200,.055);
+    --panel-3:rgba(255,240,200,.085);
+    --line:rgba(251,191,36,.14);
+    --line-2:rgba(251,191,36,.34);
+    --muted:#7C7361;
+    --soft:#B5AC97;
+    --cyan:#FBBF24;
+    --green:#34D399;
+    --lime:#FEE9A8;
+    --coral:#F87171;
+    --amber:#E8940C;
+    --violet:#FBBF24;
+    --pink:#FDE68A;
+    --shadow:0 24px 50px -32px rgba(0,0,0,.95), 0 1px 0 rgba(255,240,200,.04) inset;
+    --radius:10px;
+  }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        min-height: 100%;
+        background: var(--bg);
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        color: var(--text);
+        font-family:
+          Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+          sans-serif;
+        letter-spacing: 0;
+        background:
+          linear-gradient(rgba(255, 240, 200, 0.035) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(255, 240, 200, 0.035) 1px, transparent 1px),
+          linear-gradient(135deg, #080602 0%, #0C0904 38%, #120C03 68%, #0A0703 100%);
+        background-size: 38px 38px, 38px 38px, auto;
+      }
+
+      button,
+      input,
+      select,
+      textarea {
+        font: inherit;
+      }
+
+      button {
+        cursor: pointer;
+      }
+
+      .app {
+        display: grid;
+        grid-template-columns: 260px minmax(0, 1fr);
+        min-height: 100vh;
+      }
+
+      .rail {
+        position: sticky;
+        top: 0;
+        height: 100vh;
+        padding: 18px;
+        border-right: 1px solid var(--line);
+        background: rgba(6, 4, 1, 0.84);
+        backdrop-filter: blur(18px);
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+      }
+
+      .brand {
+        display: grid;
+        grid-template-columns: 44px 1fr;
+        gap: 12px;
+        align-items: center;
+        min-height: 52px;
+      }
+
+      .mark {
+        height: 44px;
+        border-radius: var(--radius);
+        display: grid;
+        place-items: center;
+        font-weight: 900;
+        color: #170F02;
+        background:
+          linear-gradient(135deg, rgba(251, 191, 36, 0.95), rgba(254, 233, 168, 0.95)),
+          #FBBF24;
+        box-shadow: 0 0 28px rgba(251, 191, 36, 0.28);
+      }
+
+      .brand strong,
+      .mini-card strong {
+        display: block;
+        font-size: 14px;
+      }
+
+      .brand span,
+      .mini-card span {
+        display: block;
+        color: var(--muted);
+        font-size: 12px;
+        margin-top: 3px;
+      }
+
+      .nav {
+        display: grid;
+        gap: 8px;
+      }
+
+      .nav button {
+        width: 100%;
+        min-height: 44px;
+        border: 1px solid transparent;
+        border-radius: var(--radius);
+        background: transparent;
+        color: var(--soft);
+        display: grid;
+        grid-template-columns: 28px 1fr auto;
+        align-items: center;
+        gap: 9px;
+        padding: 0 11px;
+        text-align: left;
+      }
+
+      .nav button:hover,
+      .nav button.active {
+        border-color: var(--line);
+        background: var(--panel-2);
+        color: var(--text);
+      }
+
+      .nav button.active::after {
+        content: "";
+        width: 6px;
+        height: 6px;
+        border-radius: 999px;
+        background: var(--cyan);
+        box-shadow: 0 0 18px var(--cyan);
+      }
+
+      .nav i,
+      .tool-icon {
+        width: 26px;
+        height: 26px;
+        border-radius: 7px;
+        display: grid;
+        place-items: center;
+        font-style: normal;
+        font-size: 12px;
+        font-weight: 900;
+        background: rgba(255, 240, 200, 0.08);
+        border: 1px solid var(--line);
+      }
+
+      .mini-card {
+        margin-top: auto;
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: var(--panel-2);
+        padding: 14px;
+      }
+
+      .signal {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--green);
+        font-size: 12px;
+        font-weight: 800;
+        margin-bottom: 10px;
+      }
+
+      .signal::before {
+        content: "";
+        width: 8px;
+        height: 8px;
+        border-radius: 999px;
+        background: var(--green);
+        box-shadow: 0 0 16px var(--green);
+      }
+
+      .main {
+        min-width: 0;
+        padding: 22px;
+      }
+
+      .hero {
+        min-height: 230px;
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background:
+          linear-gradient(110deg, rgba(251, 191, 36, 0.16), transparent 36%),
+          linear-gradient(250deg, rgba(232, 148, 12, 0.18), transparent 34%),
+          linear-gradient(135deg, rgba(255, 240, 200, 0.1), rgba(255, 240, 200, 0.035));
+        box-shadow: var(--shadow);
+        overflow: hidden;
+        position: relative;
+      }
+
+      .hero::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background:
+          linear-gradient(90deg, rgba(255, 240, 200, 0.04) 1px, transparent 1px),
+          linear-gradient(rgba(255, 240, 200, 0.04) 1px, transparent 1px);
+        background-size: 54px 54px;
+        mask-image: linear-gradient(90deg, transparent, #000 20%, #000 80%, transparent);
+        pointer-events: none;
+      }
+
+      .hero-inner {
+        position: relative;
+        z-index: 1;
+        display: grid;
+        grid-template-columns: minmax(0, 1.2fr) minmax(320px, 0.8fr);
+        gap: 20px;
+        padding: 24px;
+      }
+
+      .eyebrow {
+        margin: 0 0 9px;
+        color: var(--cyan);
+        font-size: 11px;
+        font-weight: 900;
+        text-transform: uppercase;
+      }
+
+      h1,
+      h2,
+      h3,
+      p {
+        margin-top: 0;
+      }
+
+      h1 {
+        max-width: 780px;
+        margin-bottom: 16px;
+        font-size: clamp(36px, 5.2vw, 72px);
+        line-height: 0.95;
+        letter-spacing: 0;
+      }
+
+      h2 {
+        margin-bottom: 0;
+        font-size: 18px;
+        line-height: 1.15;
+      }
+
+      h3 {
+        margin-bottom: 8px;
+        font-size: 15px;
+        line-height: 1.22;
+      }
+
+      .hero-copy {
+        max-width: 650px;
+        color: var(--soft);
+        line-height: 1.55;
+      }
+
+      .hero-actions,
+      .top-row,
+      .filters,
+      .card-top,
+      .meta,
+      .score-line,
+      .panel-head,
+      .toolbar,
+      .field-row {
+        display: flex;
+        align-items: center;
+      }
+
+      .hero-actions {
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-top: 24px;
+      }
+
+      .button,
+      .icon-button,
+      .chip,
+      select,
+      input,
+      textarea {
+        border-radius: var(--radius);
+        border: 1px solid var(--line);
+        background: rgba(255, 240, 200, 0.07);
+        color: var(--text);
+      }
+
+      .button,
+      .icon-button {
+        min-height: 42px;
+        padding: 0 14px;
+        font-weight: 850;
+      }
+
+      .button.primary {
+        color: #170F02;
+        border-color: transparent;
+        background: linear-gradient(135deg, var(--cyan), var(--lime));
+        box-shadow: 0 12px 38px rgba(251, 191, 36, 0.18);
+      }
+
+      .icon-button {
+        width: 42px;
+        padding: 0;
+      }
+
+      .button:hover,
+      .icon-button:hover,
+      .chip:hover {
+        border-color: var(--line-2);
+      }
+
+      .command-strip {
+        align-self: stretch;
+        display: grid;
+        gap: 10px;
+      }
+
+      .command-card {
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: rgba(0, 0, 0, 0.22);
+        padding: 13px;
+      }
+
+      .command-card .row {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        color: var(--muted);
+        font-size: 12px;
+        margin-bottom: 8px;
+      }
+
+      .pulse-bar {
+        height: 7px;
+        border-radius: 999px;
+        background: rgba(255, 240, 200, 0.08);
+        overflow: hidden;
+      }
+
+      .pulse-bar span {
+        display: block;
+        height: 100%;
+        width: var(--w);
+        background: linear-gradient(90deg, var(--cyan), var(--green), var(--amber));
+        border-radius: 999px;
+      }
+
+      .top-row {
+        justify-content: space-between;
+        gap: 14px;
+        margin: 18px 0 16px;
+      }
+
+      .filters {
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+
+      .chip {
+        min-height: 36px;
+        padding: 0 12px;
+        font-size: 13px;
+        font-weight: 800;
+      }
+
+      .chip.active {
+        color: #170F02;
+        background: var(--text);
+      }
+
+      .search {
+        width: min(420px, 34vw);
+        min-height: 40px;
+        padding: 0 12px;
+      }
+
+      input,
+      select,
+      textarea {
+        min-height: 40px;
+        padding: 0 11px;
+        outline: 0;
+      }
+
+      select option {
+        color: #111;
+      }
+
+      textarea {
+        min-height: 140px;
+        padding: 12px;
+        resize: vertical;
+      }
+
+      .kpis {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 12px;
+        margin-bottom: 12px;
+      }
+
+      .kpi,
+      .panel,
+      .post-card,
+      .lane,
+      .day,
+      .source-card {
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: var(--panel);
+        box-shadow: var(--shadow);
+      }
+
+      .kpi {
+        min-height: 132px;
+        padding: 16px;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .kpi::after {
+        content: "";
+        position: absolute;
+        right: 14px;
+        bottom: 14px;
+        width: 72px;
+        height: 32px;
+        border-radius: 999px;
+        border: 1px solid rgba(255, 240, 200, 0.15);
+        background: linear-gradient(90deg, transparent, rgba(255, 240, 200, 0.1));
+        transform: skewX(-20deg);
+      }
+
+      .kpi span {
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: 800;
+        text-transform: uppercase;
+      }
+
+      .kpi strong {
+        display: block;
+        margin: 11px 0 8px;
+        font-size: 36px;
+        line-height: 1;
+      }
+
+      .kpi p {
+        margin-bottom: 0;
+        color: var(--soft);
+        font-size: 13px;
+        line-height: 1.35;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: minmax(0, 1.45fr) minmax(340px, 0.55fr);
+        gap: 12px;
+      }
+
+      .panel {
+        padding: 16px;
+        min-width: 0;
+      }
+
+      .panel-head {
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 14px;
+      }
+
+      .content-list,
+      .alerts,
+      .insights,
+      .source-grid {
+        display: grid;
+        gap: 10px;
+      }
+
+      .post-card {
+        display: grid;
+        grid-template-columns: 96px 1fr;
+        gap: 12px;
+        padding: 10px;
+        background: rgba(255, 240, 200, 0.055);
+        box-shadow: none;
+      }
+
+      .thumb {
+        min-height: 112px;
+        border-radius: var(--radius);
+        background:
+          linear-gradient(145deg, var(--a), transparent 58%),
+          linear-gradient(35deg, var(--b), rgba(255, 240, 200, 0.08));
+        border: 1px solid rgba(255, 240, 200, 0.12);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .thumb::after {
+        content: "";
+        position: absolute;
+        inset: 12px;
+        border: 1px solid rgba(255, 240, 200, 0.22);
+        border-radius: 6px;
+      }
+
+      .card-body {
+        min-width: 0;
+      }
+
+      .card-top {
+        justify-content: space-between;
+        gap: 10px;
+        margin-bottom: 9px;
+      }
+
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        min-height: 24px;
+        border-radius: 999px;
+        padding: 0 8px;
+        color: #170F02;
+        background: var(--soft);
+        font-size: 11px;
+        font-weight: 900;
+      }
+
+      .badge.reel {
+        background: var(--cyan);
+      }
+
+      .badge.carrusel {
+        background: var(--lime);
+      }
+
+      .badge.stories {
+        background: var(--pink);
+      }
+
+      .badge.ad {
+        background: var(--amber);
+      }
+
+      .status {
+        color: var(--soft);
+        background: rgba(255, 240, 200, 0.08);
+        border: 1px solid var(--line);
+      }
+
+      .post-card h3 {
+        font-size: 17px;
+      }
+
+      .post-card p {
+        color: var(--muted);
+        line-height: 1.42;
+        margin-bottom: 12px;
+      }
+
+      .meta {
+        gap: 7px;
+        flex-wrap: wrap;
+        color: var(--soft);
+        font-size: 12px;
+      }
+
+      .meta span {
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        padding: 4px 8px;
+      }
+
+      .score-line {
+        gap: 10px;
+        margin-top: 12px;
+      }
+
+      .meter {
+        flex: 1;
+        height: 7px;
+        border-radius: 999px;
+        background: rgba(255, 240, 200, 0.09);
+        overflow: hidden;
+      }
+
+      .meter span {
+        display: block;
+        height: 100%;
+        width: var(--score);
+        border-radius: 999px;
+        background: var(--meter);
+      }
+
+      .score {
+        width: 52px;
+        text-align: right;
+        font-size: 12px;
+        color: var(--soft);
+        font-weight: 900;
+      }
+
+      .alert,
+      .insight {
+        border: 1px solid var(--line);
+        border-left: 3px solid var(--accent);
+        border-radius: var(--radius);
+        background: rgba(255, 240, 200, 0.055);
+        padding: 12px;
+      }
+
+      .alert strong,
+      .insight strong {
+        display: block;
+        font-size: 13px;
+        margin-bottom: 5px;
+      }
+
+      .alert p,
+      .insight p {
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.42;
+        margin-bottom: 0;
+      }
+
+      .status-bars {
+        display: grid;
+        gap: 11px;
+      }
+
+      .ig-dashboard {
+        display: grid;
+        gap: 12px;
+      }
+
+      .metric-grid {
+        display: grid;
+        grid-template-columns: repeat(6, minmax(0, 1fr));
+        gap: 12px;
+      }
+
+      .metric-card {
+        min-height: 132px;
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background:
+          linear-gradient(145deg, rgba(255, 240, 200, 0.1), rgba(255, 240, 200, 0.035)),
+          var(--panel);
+        box-shadow: var(--shadow);
+        padding: 14px;
+        overflow: hidden;
+        position: relative;
+      }
+
+      .metric-card::after {
+        content: "";
+        position: absolute;
+        right: -20px;
+        bottom: -26px;
+        width: 92px;
+        height: 92px;
+        border-radius: 999px;
+        border: 1px solid rgba(255, 240, 200, 0.12);
+        background: radial-gradient(circle, color-mix(in srgb, var(--accent) 24%, transparent), transparent 68%);
+      }
+
+      .metric-card span {
+        color: var(--muted);
+        font-size: 11px;
+        font-weight: 900;
+        text-transform: uppercase;
+      }
+
+      .metric-card strong {
+        display: block;
+        margin-top: 10px;
+        font-size: 30px;
+        line-height: 1;
+      }
+
+      .metric-card p {
+        margin: 9px 0 0;
+        color: var(--soft);
+        font-size: 12px;
+        line-height: 1.35;
+      }
+
+      .delta {
+        display: inline-flex;
+        align-items: center;
+        min-height: 22px;
+        margin-top: 12px;
+        border-radius: 999px;
+        padding: 0 8px;
+        color: #170F02;
+        background: var(--accent);
+        font-size: 11px;
+        font-weight: 900;
+      }
+
+      .analytics-grid {
+        display: grid;
+        grid-template-columns: minmax(0, 1.2fr) minmax(360px, 0.8fr);
+        gap: 12px;
+      }
+
+      .analytics-grid.three {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .chart-card {
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: var(--panel);
+        box-shadow: var(--shadow);
+        padding: 16px;
+        min-width: 0;
+      }
+
+      .chart-card.tall {
+        min-height: 360px;
+      }
+
+      .chart-top {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 14px;
+        margin-bottom: 16px;
+      }
+
+      .chart-top p {
+        margin: 5px 0 0;
+        color: var(--muted);
+        font-size: 12px;
+      }
+
+      .chart-value {
+        text-align: right;
+        color: var(--soft);
+        font-size: 12px;
+        font-weight: 900;
+      }
+
+      .chart-value strong {
+        display: block;
+        color: var(--text);
+        font-size: 24px;
+        line-height: 1;
+      }
+
+      .bars-chart {
+        height: 240px;
+        display: grid;
+        grid-template-columns: repeat(var(--count), minmax(0, 1fr));
+        align-items: end;
+        gap: 8px;
+        padding-top: 16px;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .bar-col {
+        min-width: 0;
+        display: grid;
+        gap: 8px;
+        align-items: end;
+        height: 100%;
+      }
+
+      .bar-stack {
+        height: 100%;
+        display: grid;
+        align-items: end;
+      }
+
+      .bar-fill {
+        min-height: 10px;
+        border-radius: 7px 7px 0 0;
+        background: linear-gradient(180deg, var(--accent), rgba(255, 240, 200, 0.1));
+        box-shadow: 0 0 24px color-mix(in srgb, var(--accent) 22%, transparent);
+      }
+
+      .bar-col span {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        color: var(--muted);
+        font-size: 11px;
+        text-align: center;
+        white-space: nowrap;
+      }
+
+      .line-chart {
+        height: 250px;
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background:
+          linear-gradient(rgba(255, 240, 200, 0.045) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(255, 240, 200, 0.035) 1px, transparent 1px);
+        background-size: 100% 25%, 12.5% 100%;
+        overflow: hidden;
+      }
+
+      .line-chart svg {
+        display: block;
+        width: 100%;
+        height: 100%;
+      }
+
+      .donut-wrap {
+        display: grid;
+        grid-template-columns: 190px 1fr;
+        align-items: center;
+        gap: 18px;
+      }
+
+      .donut {
+        width: 180px;
+        aspect-ratio: 1;
+        border-radius: 50%;
+        background: conic-gradient(
+          var(--cyan) 0 36%,
+          var(--lime) 36% 59%,
+          var(--pink) 59% 77%,
+          var(--amber) 77% 90%,
+          var(--coral) 90% 100%
+        );
+        position: relative;
+        box-shadow: 0 0 45px rgba(251, 191, 36, 0.14);
+      }
+
+      .donut::after {
+        content: "8.7% ER";
+        position: absolute;
+        inset: 34px;
+        border-radius: 50%;
+        display: grid;
+        place-items: center;
+        color: var(--text);
+        background: #0B0803;
+        border: 1px solid var(--line);
+        font-weight: 900;
+      }
+
+      .legend {
+        display: grid;
+        gap: 9px;
+      }
+
+      .legend-row {
+        display: grid;
+        grid-template-columns: 10px 1fr auto;
+        align-items: center;
+        gap: 9px;
+        color: var(--soft);
+        font-size: 13px;
+      }
+
+      .legend-dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 999px;
+        background: var(--accent);
+        box-shadow: 0 0 14px var(--accent);
+      }
+
+      .mini-metrics {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+      }
+
+      .mini-metric {
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: rgba(255, 240, 200, 0.055);
+        padding: 12px;
+      }
+
+      .mini-metric span {
+        color: var(--muted);
+        font-size: 11px;
+        font-weight: 900;
+        text-transform: uppercase;
+      }
+
+      .mini-metric strong {
+        display: block;
+        margin-top: 7px;
+        font-size: 22px;
+      }
+
+      .retention-list,
+      .funnel-list {
+        display: grid;
+        gap: 12px;
+      }
+
+      .retention-row {
+        display: grid;
+        grid-template-columns: 110px 1fr 48px;
+        align-items: center;
+        gap: 10px;
+        color: var(--soft);
+        font-size: 13px;
+      }
+
+      .funnel-step {
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: rgba(255, 240, 200, 0.055);
+        padding: 11px;
+      }
+
+      .funnel-step div {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        font-size: 13px;
+        color: var(--soft);
+        font-weight: 800;
+      }
+
+      .funnel-step .meter {
+        margin-top: 9px;
+      }
+
+      .heatmap {
+        display: grid;
+        grid-template-columns: repeat(7, minmax(0, 1fr));
+        gap: 7px;
+      }
+
+      .heat-cell {
+        min-height: 54px;
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: color-mix(in srgb, var(--cyan) calc(var(--heat) * 1%), rgba(255, 240, 200, 0.045));
+        display: grid;
+        align-content: center;
+        justify-items: center;
+        color: var(--text);
+        font-size: 11px;
+        font-weight: 900;
+      }
+
+      .heat-cell span {
+        margin-top: 3px;
+        color: var(--muted);
+        font-weight: 800;
+      }
+
+      .bar-row {
+        display: grid;
+        grid-template-columns: 98px 1fr 30px;
+        align-items: center;
+        gap: 10px;
+        color: var(--soft);
+        font-size: 13px;
+      }
+
+      .board {
+        display: grid;
+        grid-template-columns: repeat(6, minmax(220px, 1fr));
+        gap: 10px;
+        overflow-x: auto;
+        padding-bottom: 8px;
+      }
+
+      .lane {
+        min-height: 620px;
+        padding: 10px;
+        background: rgba(255, 240, 200, 0.045);
+        box-shadow: none;
+      }
+
+      .lane-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+        color: var(--soft);
+        font-weight: 900;
+      }
+
+      .lane .post-card {
+        grid-template-columns: 1fr;
+        margin-bottom: 10px;
+      }
+
+      .lane .thumb {
+        min-height: 74px;
+      }
+
+      .calendar {
+        display: grid;
+        grid-template-columns: repeat(7, minmax(150px, 1fr));
+        gap: 10px;
+        overflow-x: auto;
+        padding-bottom: 8px;
+      }
+
+      .day {
+        min-height: 540px;
+        padding: 12px;
+        background: rgba(255, 240, 200, 0.045);
+        box-shadow: none;
+      }
+
+      .day strong {
+        display: block;
+        margin-bottom: 10px;
+      }
+
+      .calendar-item {
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: rgba(255, 240, 200, 0.07);
+        padding: 10px;
+        margin-bottom: 9px;
+      }
+
+      .calendar-item span {
+        display: block;
+        color: var(--cyan);
+        font-size: 12px;
+        font-weight: 900;
+        margin-bottom: 5px;
+      }
+
+      .calendar-item p {
+        font-size: 13px;
+        line-height: 1.32;
+        margin-bottom: 0;
+      }
+
+      .generator {
+        display: grid;
+        grid-template-columns: 380px minmax(0, 1fr);
+        gap: 12px;
+      }
+
+      .form-grid {
+        display: grid;
+        gap: 12px;
+      }
+
+      label {
+        display: grid;
+        gap: 6px;
+        color: var(--soft);
+        font-size: 12px;
+        font-weight: 800;
+      }
+
+      input[type="range"] {
+        accent-color: var(--cyan);
+      }
+
+      .output {
+        min-height: 540px;
+      }
+
+      .script-card {
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: rgba(255, 240, 200, 0.055);
+        padding: 16px;
+      }
+
+      .script-card ol {
+        padding-left: 20px;
+        color: var(--soft);
+        line-height: 1.55;
+      }
+
+      .source-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .source-card {
+        padding: 16px;
+        min-height: 210px;
+        background: rgba(255, 240, 200, 0.055);
+        box-shadow: none;
+      }
+
+      .source-card p {
+        color: var(--muted);
+        line-height: 1.45;
+      }
+
+      .tags {
+        display: flex;
+        gap: 7px;
+        flex-wrap: wrap;
+        margin-top: 14px;
+      }
+
+      .tags span {
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        padding: 5px 8px;
+        color: var(--soft);
+        font-size: 11px;
+        font-weight: 800;
+      }
+
+      .settings-grid {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(320px, 0.75fr);
+        gap: 12px;
+      }
+
+      .locked {
+        border: 1px solid rgba(232, 148, 12, 0.28);
+        background: rgba(232, 148, 12, 0.08);
+        border-radius: var(--radius);
+        padding: 14px;
+        margin-bottom: 14px;
+      }
+
+      .locked strong {
+        display: inline-flex;
+        margin-bottom: 9px;
+        color: var(--coral);
+      }
+
+      .checklist {
+        display: grid;
+        gap: 9px;
+      }
+
+      .checklist div {
+        display: grid;
+        grid-template-columns: 24px 1fr;
+        align-items: center;
+        gap: 8px;
+        min-height: 42px;
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: rgba(255, 240, 200, 0.055);
+        padding: 0 10px;
+        color: var(--soft);
+      }
+
+      .check {
+        width: 18px;
+        height: 18px;
+        border-radius: 5px;
+        display: grid;
+        place-items: center;
+        color: #170F02;
+        background: var(--green);
+        font-size: 12px;
+        font-weight: 900;
+      }
+
+      .empty {
+        width: 18px;
+        height: 18px;
+        border-radius: 5px;
+        border: 1px solid var(--line-2);
+      }
+
+      .view {
+        display: none;
+      }
+
+      .view.active {
+        display: block;
+      }
+
+      .no-results {
+        border: 1px dashed var(--line-2);
+        border-radius: var(--radius);
+        color: var(--muted);
+        padding: 20px;
+        text-align: center;
+      }
+
+      @media (max-width: 1200px) {
+        .app {
+          grid-template-columns: 86px minmax(0, 1fr);
+        }
+
+        .rail {
+          padding: 14px;
+        }
+
+        .brand {
+          grid-template-columns: 1fr;
+          justify-items: center;
+        }
+
+        .brand div,
+        .nav b,
+        .mini-card span,
+        .mini-card strong {
+          display: none;
+        }
+
+        .nav button {
+          grid-template-columns: 1fr;
+          justify-items: center;
+          padding: 0;
+        }
+
+        .hero-inner,
+        .grid,
+        .generator,
+        .settings-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .kpis,
+        .source-grid,
+        .metric-grid,
+        .analytics-grid.three {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .analytics-grid,
+        .donut-wrap {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (max-width: 760px) {
+        .app {
+          display: block;
+        }
+
+        .rail {
+          position: static;
+          height: auto;
+          border-right: 0;
+          border-bottom: 1px solid var(--line);
+        }
+
+        .brand {
+          grid-template-columns: 44px 1fr;
+          justify-items: start;
+        }
+
+        .brand div,
+        .nav b,
+        .mini-card span,
+        .mini-card strong {
+          display: block;
+        }
+
+        .nav {
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+
+        .nav button {
+          min-height: 58px;
+          grid-template-columns: 1fr;
+          justify-items: center;
+          text-align: center;
+          padding: 6px;
+        }
+
+        .nav b {
+          font-size: 11px;
+        }
+
+        .main {
+          padding: 14px;
+        }
+
+        .hero-inner {
+          padding: 18px;
+        }
+
+        h1 {
+          font-size: 40px;
+        }
+
+        .top-row {
+          align-items: stretch;
+          flex-direction: column;
+        }
+
+        .search {
+          width: 100%;
+        }
+
+        .kpis,
+        .source-grid,
+        .metric-grid,
+        .analytics-grid.three,
+        .mini-metrics {
+          grid-template-columns: 1fr;
+        }
+
+        .bars-chart {
+          gap: 5px;
+        }
+
+        .retention-row {
+          grid-template-columns: 86px 1fr 40px;
+        }
+
+        .post-card {
+          grid-template-columns: 1fr;
+        }
+
+        .calendar,
+        .board {
+          grid-template-columns: 1fr;
+          overflow: visible;
+        }
+
+        .lane,
+        .day {
+          min-height: auto;
+        }
+      }
+
+  /* ============================================================
+     CAPA DE MARCA — HIGHWAY COMMAND
+     Lo unico que traemos del dashboard anterior: identidad visual.
+     ============================================================ */
+
+  /* resplandor dorado de fondo */
+  body::before{
+    content:''; position:fixed; inset:0; pointer-events:none; z-index:0;
+    background:
+      radial-gradient(720px 440px at 10% -8%, rgba(217,119,6,.22), transparent 62%),
+      radial-gradient(640px 420px at 92% 2%, rgba(251,191,36,.13), transparent 60%),
+      radial-gradient(1000px 620px at 50% 110%, rgba(180,83,9,.14), transparent 66%);
+  }
+  /* hilo de oro superior */
+  body::after{
+    content:''; position:fixed; top:0; left:0; right:0; height:1px; pointer-events:none; z-index:3;
+    background:linear-gradient(90deg, transparent 0%, rgba(251,191,36,.55) 25%, rgba(254,233,168,.75) 50%, rgba(251,191,36,.55) 75%, transparent 100%);
+  }
+  .app{position:relative; z-index:1;}
+
+  body{
+    font-family:'Inter',system-ui,-apple-system,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;
+    font-variant-numeric:tabular-nums;
+    -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
+  }
+  h1,h2,h3{font-family:'Sora','Avenir Next','Segoe UI Variable Display',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif; letter-spacing:-.035em;}
+  h1{font-weight:800; letter-spacing:-.042em;}
+
+  /* pastilla dorada del hero */
+  .eyebrow-badge{
+    font-family:'JetBrains Mono',ui-monospace,'SF Mono',SFMono-Regular,Menlo,Consolas,'Liberation Mono',monospace; font-size:10.5px; letter-spacing:.22em;
+    color:var(--v3); text-transform:uppercase; margin:0 0 14px;
+    display:inline-flex; align-items:center; gap:9px;
+    padding:6px 13px 6px 10px; border-radius:100px;
+    background:var(--grad-soft); border:1px solid var(--border);
+  }
+  .eyebrow-badge::before{
+    content:''; width:6px; height:6px; border-radius:50%;
+    background:var(--grad-h); box-shadow:var(--glow);
+  }
+
+  /* marca lateral */
+  .mark{
+    font-family:'Sora','Avenir Next','Segoe UI Variable Display',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif; font-size:19px; font-weight:800;
+    background:var(--grad-h); color:var(--on-gold);
+    box-shadow:0 0 26px rgba(251,191,36,.30);
+  }
+  .brand strong{font-family:'Sora','Avenir Next','Segoe UI Variable Display',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif; font-weight:800; letter-spacing:-.01em; font-size:13px;}
+
+  /* navegacion */
+  .nav i{font-family:'JetBrains Mono',ui-monospace,'SF Mono',SFMono-Regular,Menlo,Consolas,'Liberation Mono',monospace;}
+  .nav button.active i{background:var(--grad-h); color:var(--on-gold); border-color:transparent;}
+  .nav button.active::after{background:var(--v4); box-shadow:0 0 18px rgba(251,191,36,.7);}
+  .nav b{font-weight:650;}
+
+  /* acentos */
+  .button.primary{background:var(--grad-h); color:var(--on-gold); box-shadow:0 12px 34px rgba(251,191,36,.18);}
+  .chip.active{background:var(--grad-h); color:var(--on-gold); border-color:transparent;}
+  .pulse-bar span{background:var(--grad-h);}
+  .signal{color:var(--g3);}
+  .signal::before{background:var(--g3); box-shadow:0 0 16px rgba(52,211,153,.7);}
+  .eyebrow{color:var(--v3); font-family:'JetBrains Mono',ui-monospace,'SF Mono',SFMono-Regular,Menlo,Consolas,'Liberation Mono',monospace; letter-spacing:.12em; font-size:10px;}
+  .chart-value strong,.kpi strong{font-family:'Sora','Avenir Next','Segoe UI Variable Display',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;}
+  /* ============================================================
+     EDICION Y CONECTORES
+     ============================================================ */
+  [contenteditable="true"]{ cursor:text; border-radius:5px; transition:background .14s ease, box-shadow .14s ease; }
+  [contenteditable="true"]:hover{ background:rgba(251,191,36,.07); }
+  [contenteditable="true"]:focus{
+    outline:none; background:rgba(251,191,36,.12);
+    box-shadow:0 0 0 2px rgba(251,191,36,.38); color:var(--text);
+  }
+  .metric-card, .insight, .source-card, .post-card{ position:relative; }
+
+  .x-btn{
+    position:absolute; top:8px; right:8px; z-index:2;
+    width:22px; height:22px; padding:0; line-height:1;
+    display:grid; place-items:center;
+    border-radius:6px; border:1px solid var(--line);
+    background:rgba(8,6,2,.72); color:var(--text-faint);
+    font-size:11px; opacity:0; transition:all .14s ease;
+  }
+  .metric-card:hover .x-btn, .insight:hover .x-btn,
+  .source-card:hover .x-btn, .post-card:hover .x-btn{ opacity:1; }
+  .x-btn:hover{ color:var(--text); border-color:var(--line-2); background:rgba(251,191,36,.16); }
+
+  .card-tools{ margin-left:auto; display:inline-flex; gap:5px; position:relative; }
+  .card-tools .x-btn{ position:static; opacity:.45; }
+  .post-card:hover .card-tools .x-btn{ opacity:1; }
+
+  .add-card{
+    min-height:96px; border-radius:var(--radius);
+    border:1px dashed var(--line-2); background:transparent;
+    color:var(--text-faint); font-weight:650; font-size:12.5px;
+    transition:all .14s ease;
+  }
+  .add-card.tall{ min-height:150px; }
+  .add-card:hover{ color:var(--v3); border-color:var(--v4); background:rgba(251,191,36,.06); }
+
+  .bar-num{
+    font-family:'JetBrains Mono',ui-monospace,'SF Mono',SFMono-Regular,Menlo,Consolas,'Liberation Mono',monospace; font-size:11px;
+    color:var(--text-dim); display:block; margin:5px 0 1px;
+  }
+  .tags-edit{
+    margin-top:9px; font-family:'JetBrains Mono',ui-monospace,'SF Mono',SFMono-Regular,Menlo,Consolas,'Liberation Mono',monospace; font-size:10.5px;
+    color:var(--v3); letter-spacing:.04em; line-height:1.6;
+    padding:6px 8px; border:1px dashed var(--line); border-radius:6px;
+  }
+  .heat-cell b{
+    display:block; font-family:'JetBrains Mono',ui-monospace,'SF Mono',SFMono-Regular,Menlo,Consolas,'Liberation Mono',monospace;
+    font-size:10px; color:var(--text-dim); margin-top:2px;
+  }
+
+  .head-tools{ display:flex; align-items:center; gap:9px; flex-wrap:wrap; }
+
+  /* --- conectores --- */
+  .conn-copy{ color:var(--soft); font-size:13px; line-height:1.6; margin-bottom:15px; }
+  .conn-note{
+    font-size:12.5px; line-height:1.6; padding:11px 14px; border-radius:10px;
+    margin-bottom:15px; border:1px solid transparent;
+  }
+  .conn-note.ready{
+    background:rgba(212,175,55,.09); border-color:rgba(212,175,55,.32); color:#e8d9a8;
+  }
+  .conn-note.ready strong{ color:var(--gold); }
+  .conn-note.manual{
+    background:rgba(255,255,255,.03); border-color:rgba(255,255,255,.09); color:var(--soft);
+  }
+  .conn-dot{
+    width:10px; height:10px; border-radius:999px; flex-shrink:0;
+    background:rgba(255,240,200,.18); box-shadow:none; transition:all .2s ease;
+  }
+  .conn-dot.on{ background:var(--g3); box-shadow:0 0 14px rgba(52,211,153,.8); }
+
+  .btn-row{ display:flex; gap:9px; flex-wrap:wrap; grid-column:1 / -1; }
+
+  .conn-status{
+    margin-top:13px; font-size:12.5px; line-height:1.55;
+    color:var(--text-faint); min-height:18px;
+    font-family:'JetBrains Mono',ui-monospace,'SF Mono',SFMono-Regular,Menlo,Consolas,'Liberation Mono',monospace; word-break:break-word;
+  }
+  .conn-status.ok{ color:var(--g2); }
+  .conn-status.err{ color:var(--danger); }
+
+  .locked.warn{ margin-top:16px; }
+  .locked.warn strong{ color:var(--v3); }
+
+  .settings-grid .panel .form-grid label{ display:grid; gap:6px; font-size:12px; color:var(--muted); }
+  .settings-grid .panel .form-grid input{ width:100%; }
+
+  #saveFlag{ opacity:.32; transition:opacity .22s ease; }
+  #saveFlag.on{ opacity:1; }
+
+</style>
+</head>
+<body>
+    <div class="app">
+      <aside class="rail">
+        <div class="brand">
+          <div class="mark">H</div>
+          <div>
+            <strong>HIGHWAY COMMAND</strong>
+            <span>Content OS · Adrián Miller</span>
+          </div>
+        </div>
+
+        <nav class="nav" aria-label="Vistas">
+          <button class="active" data-view="overview" title="Control">
+            <i>C</i><b>Control</b>
+          </button>
+          <button data-view="pipeline" title="Pipeline">
+            <i>P</i><b>Pipeline</b>
+          </button>
+          <button data-view="calendar" title="Calendario">
+            <i>7</i><b>Calendario</b>
+          </button>
+          <button data-view="generator" title="Generador">
+            <i>AI</i><b>Generador</b>
+          </button>
+          <button data-view="sources" title="Fuentes">
+            <i>F</i><b>Fuentes</b>
+          </button>
+          <button data-view="settings" title="IG Ready">
+            <i>IG</i><b>IG Ready</b>
+          </button>
+        </nav>
+
+        <div class="mini-card">
+          <div class="signal" id="saveFlag">GUARDADO</div>
+          <strong>Datos locales</strong>
+          <span>Todo lo que edites se guarda solo en este navegador.</span>
+          <button class="button" id="resetAll" style="width:100%; margin-top:11px; min-height:34px; font-size:12px;">Restaurar ejemplo</button>
+        </div>
+      </aside>
+
+      <main class="main">
+        <section class="hero">
+          <div class="hero-inner">
+            <div>
+              <p class="eyebrow-badge">Content Ops · Lucca</p>
+              <h1>IG Performance Command Center.</h1>
+              <p class="hero-copy">
+                Tablero principal con métricas mock de Instagram, gráficos, señales de contenido
+                y las otras pestañas operativas listas sin tocar Meta ni consultar APIs reales.
+              </p>
+              <div class="hero-actions">
+                <button class="button primary" data-jump="generator">Crear pieza mock</button>
+                <button class="button" data-jump="pipeline">Ver pipeline</button>
+                <button class="button" data-jump="settings">IG offline</button>
+              </div>
+            </div>
+            <div class="command-strip" aria-label="Estado operativo">
+              <div class="command-card">
+                <div class="row"><strong>Quality gate</strong><span>87%</span></div>
+                <div class="pulse-bar"><span style="--w: 87%"></span></div>
+              </div>
+              <div class="command-card">
+                <div class="row"><strong>Publicables hoy</strong><span>9 piezas</span></div>
+                <div class="pulse-bar"><span style="--w: 68%"></span></div>
+              </div>
+              <div class="command-card">
+                <div class="row"><strong>Bloqueos creativos</strong><span>2 rojos</span></div>
+                <div class="pulse-bar"><span style="--w: 24%"></span></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <div class="top-row">
+          <div class="filters" id="formatFilters">
+            <button class="chip active" data-format="all">Todo</button>
+            <button class="chip" data-format="Reel">Reels</button>
+            <button class="chip" data-format="Carrusel">Carruseles</button>
+            <button class="chip" data-format="Stories">Stories</button>
+            <button class="chip" data-format="Ad">Ads</button>
+          </div>
+          <div class="toolbar">
+            <input class="search" id="search" type="search" placeholder="Buscar hook, CTA, responsable..." />
+            <button class="icon-button" id="reset" title="Limpiar filtros">R</button>
+          </div>
+        </div>
+
+        <section class="view active" id="overview">
+          <div class="ig-dashboard">
+            <div class="metric-grid" id="igMetrics"></div>
+
+            <div class="analytics-grid">
+              <section class="chart-card tall">
+                <div class="chart-top">
+                  <div>
+                    <p class="eyebrow">Crecimiento 30 dias</p>
+                    <h2>Seguidores, alcance e interaccion</h2>
+                    <p>Mock de evolución diaria para ver tendencia, no data real.</p>
+                  </div>
+                  <div class="chart-value"><strong>+4.812</strong>net followers</div>
+                </div>
+                <div class="line-chart" id="growthChart"></div>
+              </section>
+
+              <section class="chart-card tall">
+                <div class="chart-top">
+                  <div>
+                    <p class="eyebrow">Mix engagement</p>
+                    <h2>Qué está generando acción</h2>
+                    <p>Likes, comentarios, saves, shares y DMs.</p>
+                  </div>
+                </div>
+                <div class="donut-wrap">
+                  <div class="donut" aria-label="Engagement rate 8.7%"></div>
+                  <div class="legend" id="engagementLegend"></div>
+                </div>
+              </section>
+            </div>
+
+            <div class="analytics-grid three">
+              <section class="chart-card">
+                <div class="chart-top">
+                  <div>
+                    <p class="eyebrow">Alcance por formato</p>
+                    <h2>Reels vs carruseles vs stories</h2>
+                  </div>
+                  <div class="chart-value"><strong>1.42M</strong>reach</div>
+                </div>
+                <div class="bars-chart" id="formatReach"></div>
+              </section>
+
+              <section class="chart-card">
+                <div class="chart-top">
+                  <div>
+                    <p class="eyebrow">Retencion reels</p>
+                    <h2>Caida por tramo</h2>
+                  </div>
+                  <div class="chart-value"><strong>42%</strong>avg finish</div>
+                </div>
+                <div class="retention-list" id="retentionRows"></div>
+              </section>
+
+              <section class="chart-card">
+                <div class="chart-top">
+                  <div>
+                    <p class="eyebrow">CTR / perfil</p>
+                    <h2>Ruta a DM y agenda</h2>
+                  </div>
+                  <div class="chart-value"><strong>3.9%</strong>CTR bio</div>
+                </div>
+                <div class="funnel-list" id="funnelRows"></div>
+              </section>
+            </div>
+
+            <div class="analytics-grid">
+              <section class="chart-card">
+                <div class="chart-top">
+                  <div>
+                    <p class="eyebrow">Performance horario</p>
+                    <h2>Heatmap de publicación</h2>
+                    <p>Mock de intensidad por día/hora para decidir slots.</p>
+                  </div>
+                </div>
+                <div class="heatmap" id="heatmap"></div>
+              </section>
+
+              <section class="chart-card">
+                <div class="chart-top">
+                  <div>
+                    <p class="eyebrow">Operación de contenido</p>
+                    <h2>Lo que hay que mirar hoy</h2>
+                  </div>
+                  <button class="button" data-jump="pipeline">Abrir board</button>
+                </div>
+                <div class="mini-metrics" id="opsMetrics"></div>
+              </section>
+            </div>
+
+            <div class="analytics-grid">
+              <section class="chart-card">
+                <div class="chart-top">
+                  <div>
+                    <p class="eyebrow">Piezas ganadoras</p>
+                    <h2>Contenido con más señal comercial</h2>
+                  </div>
+                </div>
+                <div class="content-list" id="todayList"></div>
+              </section>
+
+              <section class="chart-card">
+                <div class="chart-top">
+                  <div>
+                    <p class="eyebrow">Alertas + insights</p>
+                    <h2>Control de calidad</h2>
+                  </div>
+                </div>
+                <div class="alerts" id="alerts"></div>
+                <div class="insights" id="insights" style="margin-top: 10px"></div>
+              </section>
+            </div>
+          </div>
+        </section>
+
+        <section class="view" id="pipeline">
+          <section class="panel" id="pieceForm" style="display:none;"></section>
+          <div class="panel">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">Workflow editorial</p>
+                <h2>Pipeline de producción</h2>
+              </div>
+              <div class="head-tools">
+                <select id="owner">
+                  <option value="all">Todos</option>
+                </select>
+                <button class="button primary" data-piece-new="1">+ Nueva pieza</button>
+              </div>
+            </div>
+            <div class="board" id="board"></div>
+          </div>
+        </section>
+
+        <section class="view" id="calendar">
+          <div class="panel">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">Semana mock</p>
+                <h2>Calendario editorial</h2>
+              </div>
+            </div>
+            <div class="calendar" id="calendarGrid"></div>
+          </div>
+        </section>
+
+        <section class="view" id="generator">
+          <div class="generator">
+            <section class="panel">
+              <div class="panel-head">
+                <div>
+                  <p class="eyebrow">Mock IA</p>
+                  <h2>Crear pieza</h2>
+                </div>
+              </div>
+              <form class="form-grid" id="generatorForm">
+                <label>
+                  Fuente
+                  <select id="sourceSelect"></select>
+                </label>
+                <label>
+                  Formato
+                  <select id="formatSelect">
+                    <option>Reel</option>
+                    <option>Carrusel</option>
+                    <option>Stories</option>
+                    <option>Ad</option>
+                  </select>
+                </label>
+                <label>
+                  Objetivo
+                  <select id="objectiveSelect">
+                    <option>DM</option>
+                    <option>Agenda</option>
+                    <option>Registro</option>
+                    <option>Venta</option>
+                    <option>Tráfico a perfil</option>
+                  </select>
+                </label>
+                <label>
+                  Nivel de filo
+                  <input id="edge" type="range" min="1" max="5" value="4" />
+                </label>
+                <button class="button primary" type="submit">Generar mock</button>
+              </form>
+            </section>
+
+            <section class="panel output">
+              <div class="panel-head">
+                <div>
+                  <p class="eyebrow">Salida</p>
+                  <h2>Guion listo para revisar</h2>
+                </div>
+                <span class="badge reel" id="scoreBadge">Score 90</span>
+              </div>
+              <div class="script-card" id="output"></div>
+            </section>
+          </div>
+        </section>
+
+        <section class="view" id="sources">
+          <div class="source-grid" id="sourcesGrid"></div>
+        </section>
+
+        <section class="view" id="settings">
+          <div class="settings-grid">
+
+            <!-- ============ AIRTABLE ============ -->
+            <section class="panel">
+              <div class="panel-head">
+                <div>
+                  <p class="eyebrow">Conector Airtable</p>
+                  <h2>Tu base de métricas</h2>
+                </div>
+                <span class="conn-dot" id="atDot"></span>
+              </div>
+              <p class="conn-copy">
+                Trae los números desde tus tablas de Airtable. Si además enganchás Zapier,
+                Instagram, TikTok y YouTube caen solos en la base y de ahí al dashboard.
+              </p>
+              <div class="conn-note" id="at-modo"></div>
+              <div class="form-grid">
+                <label id="at-token-label">Personal Access Token
+                  <input id="at-token" type="password" placeholder="patXXXXXXXX..." autocomplete="off" />
+                </label>
+                <label>Base ID
+                  <input id="at-base" placeholder="appXXXXXXXX" />
+                </label>
+                <label>Tabla
+                  <input id="at-table" placeholder="Metricas Mensuales" />
+                </label>
+                <label>Periodo a traer
+                  <input id="at-period" placeholder="Ej: Septiembre 2026" />
+                </label>
+                <div class="btn-row">
+                  <button class="button primary" id="at-sync">Traer métricas</button>
+                  <button class="button" id="at-test">Probar conexión</button>
+                </div>
+              </div>
+              <div class="conn-status" id="at-status"></div>
+              <div class="locked warn">
+                <strong>SOBRE EL TOKEN</strong>
+                <p>
+                  Se guarda solo en este navegador, nunca se envía a otro lado. Aun así,
+                  cualquiera con acceso a esta computadora podría leerlo: usá un token
+                  con permiso de solo lectura y limitado a esta base.
+                </p>
+              </div>
+            </section>
+
+            <!-- ============ META / INSTAGRAM ============ -->
+            <section class="panel">
+              <div class="panel-head">
+                <div>
+                  <p class="eyebrow">Conector Meta</p>
+                  <h2>Instagram Graph API</h2>
+                </div>
+                <span class="conn-dot" id="igDot"></span>
+              </div>
+              <p class="conn-copy">
+                Conexión directa contra Meta. Trae seguidores, alcance, impresiones y
+                visitas al perfil sin intermediarios.
+              </p>
+              <div class="form-grid">
+                <label>IG Business Account ID
+                  <input id="ig-id" placeholder="17841400000000000" />
+                </label>
+                <label>Access Token
+                  <input id="ig-token" type="password" placeholder="EAAG..." autocomplete="off" />
+                </label>
+                <div class="btn-row">
+                  <button class="button primary" id="ig-sync">Traer métricas</button>
+                  <button class="button" id="ig-test">Probar conexión</button>
+                </div>
+              </div>
+              <div class="conn-status" id="ig-status"></div>
+              <div class="checklist">
+                <div><span class="check">1</span>Cuenta de Instagram como Business o Creator</div>
+                <div><span class="check">2</span>Vinculada a una página de Facebook</div>
+                <div><span class="check">3</span>App creada en developers.facebook.com</div>
+                <div><span class="check">4</span>Permisos instagram_basic + instagram_manage_insights</div>
+                <div><span class="check">5</span>Token de larga duración generado</div>
+              </div>
+              <div class="locked warn">
+                <strong>SI FALLA POR CORS</strong>
+                <p>
+                  Meta bloquea llamadas directas desde algunos navegadores. Si el test
+                  devuelve error de red, la vía es Zapier hacia Airtable y usar el
+                  conector de al lado.
+                </p>
+              </div>
+            </section>
+
+          </div>
+        </section>
+      </section>
+      </main>
+    </div>
+
+
+<script>
+      const statuses = ["Idea", "Guion", "Grabado", "Editado", "Aprobado", "Programado"];
+      const days = ["Lun", "Mar", "Mie", "Jue", "Vie", "Sab", "Dom"];
+      const palette = [
+        ["#FBBF24", "#E8940C"],
+        ["#FEE9A8", "#FBBF24"],
+        ["#FDE68A", "#FCD34D"],
+        ["#F87171", "#E8940C"],
+        ["#34D399", "#FCD34D"],
+        ["#E8940C", "#FBBF24"],
+      ];
+
+      const DEF_content = [
+        {
+          format: "Reel",
+          status: "Aprobado",
+          owner: "Rami",
+          day: "Lun",
+          time: "10:00",
+          objective: "DM",
+          hook: "Tu contenido no vende porque esta educando demasiado.",
+          summary: "Pieza piedra contra contenido tibio que explica mucho y no genera deseo.",
+          cta: "Comentá SISTEMA",
+          score: 94,
+        },
+        {
+          format: "Carrusel",
+          status: "Guion",
+          owner: "Berna",
+          day: "Lun",
+          time: "13:30",
+          objective: "Agenda",
+          hook: "Si dependes de referidos, no tenes negocio: tenes suerte.",
+          summary: "Carrusel de 8 slides para romper dependencia y empujar sistema.",
+          cta: "Mandá ESCALA",
+          score: 82,
+        },
+        {
+          format: "Stories",
+          status: "Programado",
+          owner: "Gina",
+          day: "Mar",
+          time: "18:00",
+          objective: "DM",
+          hook: "Queres que te diga por que tu perfil no agenda?",
+          summary: "Secuencia de 6 stories con encuesta, prueba social y CTA a conversación.",
+          cta: "Responder PERFIL",
+          score: 88,
+        },
+        {
+          format: "Ad",
+          status: "Idea",
+          owner: "Tomi",
+          day: "Mar",
+          time: "21:00",
+          objective: "Tráfico a perfil",
+          hook: "No te falta alcance. Te falta un motivo para que te sigan.",
+          summary: "Script paid con hook visual simple y perfil como activo comercial.",
+          cta: "Ir al perfil",
+          score: 61,
+        },
+        {
+          format: "Reel",
+          status: "Grabado",
+          owner: "Mateo",
+          day: "Mie",
+          time: "09:30",
+          objective: "Venta",
+          hook: "El lead que te dice 'lo pienso' ya decidió algo.",
+          summary: "Mini historia de objeción y como convertirla en contenido.",
+          cta: "Mandá LLAMADA",
+          score: 78,
+        },
+        {
+          format: "Carrusel",
+          status: "Editado",
+          owner: "Agus",
+          day: "Mie",
+          time: "15:00",
+          objective: "Registro",
+          hook: "7 señales de que tu ManyChat esta decorando, no vendiendo.",
+          summary: "Checklist con errores de automatización sin conversación real.",
+          cta: "Guardalo y auditá tu flujo",
+          score: 89,
+        },
+        {
+          format: "Reel",
+          status: "Guion",
+          owner: "Rami",
+          day: "Jue",
+          time: "11:00",
+          objective: "DM",
+          hook: "Tu VSL no esta rota por larga. Esta rota por cobarde.",
+          summary: "Ataque a VSLs que no nombran dolor ni tensionan decisión.",
+          cta: "Comentá VSL",
+          score: 96,
+        },
+        {
+          format: "Stories",
+          status: "Idea",
+          owner: "Gina",
+          day: "Jue",
+          time: "19:30",
+          objective: "Agenda",
+          hook: "La diferencia entre contenido lindo y contenido que agenda.",
+          summary: "Stories comparando pieza tibia vs pieza con tensión y CTA claro.",
+          cta: "Responder AGENDA",
+          score: 57,
+        },
+        {
+          format: "Ad",
+          status: "Aprobado",
+          owner: "Berna",
+          day: "Vie",
+          time: "12:00",
+          objective: "Registro",
+          hook: "Si tu solución para vender más es postear más, estás perdido.",
+          summary: "Ad corto contra volumen sin sistema de demanda.",
+          cta: "Registrate",
+          score: 84,
+        },
+        {
+          format: "Reel",
+          status: "Editado",
+          owner: "Mateo",
+          day: "Vie",
+          time: "17:00",
+          objective: "DM",
+          hook: "No estas vendiendo caro. Estas explicando barato.",
+          summary: "Respuesta a objeción de precio con reframe de percepción de valor.",
+          cta: "Mandá PRECIO",
+          score: 87,
+        },
+        {
+          format: "Carrusel",
+          status: "Programado",
+          owner: "Agus",
+          day: "Sab",
+          time: "11:30",
+          objective: "Tráfico a perfil",
+          hook: "El algoritmo no te odia. La gente te ignora.",
+          summary: "Separar problema de distribución vs problema de mensaje.",
+          cta: "Revisá tu perfil",
+          score: 90,
+        },
+        {
+          format: "Stories",
+          status: "Grabado",
+          owner: "Rami",
+          day: "Dom",
+          time: "20:00",
+          objective: "Venta",
+          hook: "Si seguis esperando claridad, se te pasa el mercado.",
+          summary: "Secuencia de cierre para mover leads tibios a DM.",
+          cta: "Responder CLARIDAD",
+          score: 74,
+        },
+      ];
+
+      const DEF_sources = [
+        {
+          name: "YouTube Rami",
+          type: "58 transcripciones",
+          summary: "Material largo para extraer piedras, historias, frameworks y objeciones.",
+          tags: ["marca personal", "ventas", "Instagram", "ManyChat"],
+        },
+        {
+          name: "ManyChat DMs",
+          type: "Export simulado",
+          summary: "Preguntas repetidas, objeciones y lenguaje literal de leads.",
+          tags: ["objeciones", "DM", "urgencia", "frases reales"],
+        },
+        {
+          name: "Llamadas de venta",
+          type: "Transcripciones mock",
+          summary: "Dolores profundos, vergüenzas y objeciones antes del cierre.",
+          tags: ["precio", "confianza", "decisión", "cierre"],
+        },
+        {
+          name: "Comentarios IG",
+          type: "Placeholder",
+          summary: "Preparado para cuando exista conexión autorizada a Instagram.",
+          tags: ["offline", "webhooks", "Graph API"],
+        },
+        {
+          name: "Banco de ángulos",
+          type: "Curado",
+          summary: "Referidos, ads mal usados, VSL rota, setters, CTA agresivo.",
+          tags: ["piedras", "ads", "VSL", "referidos"],
+        },
+        {
+          name: "Quality Bar",
+          type: "Reglas",
+          summary: "Hook, tensión, creencia rota, utilidad, CTA y grababilidad.",
+          tags: ["score", "gate", "aprobación"],
+        },
+      ];
+
+      const DEF_insights = [
+        ["Dolor dominante", "La audiencia confunde volumen de posteos con sistema de demanda.", "#FBBF24"],
+        ["Objeción caliente", "No quieren vender agresivo, pero tampoco quieren seguir invisibles.", "#F87171"],
+        ["Frase reusable", "No me falta contenido, me falta que alguien me responda los DMs.", "#FEE9A8"],
+        ["Creencia a romper", "Postear más no arregla un mensaje que no hace elegir.", "#FDE68A"],
+      ];
+
+      const DEF_igMetrics = [
+        ["Vistas", "3.8M", "+31%", "Reels + stories en 30d", "#FBBF24"],
+        ["Reach", "1.42M", "+18%", "Cuentas alcanzadas", "#FEE9A8"],
+        ["Seguidores", "187.4K", "+4.8K", "Crecimiento neto", "#34D399"],
+        ["Interaccion", "8.7%", "+2.1pp", "ER promedio", "#FDE68A"],
+        ["Comentarios", "18.2K", "+44%", "Señal de conversación", "#FCD34D"],
+        ["Retencion", "42%", "+7pp", "Reels completion avg", "#E8940C"],
+        ["CTR bio", "3.9%", "+0.8pp", "Clicks desde perfil", "#F87171"],
+        ["Saves", "31.6K", "+26%", "Contenido de alta utilidad", "#FBBF24"],
+        ["Shares", "12.9K", "+19%", "Contenido reenviable", "#FEE9A8"],
+        ["DMs", "2.184", "+38%", "Conversaciones iniciadas", "#34D399"],
+        ["Profile visits", "96.7K", "+22%", "Tráfico al perfil", "#FDE68A"],
+        ["Frecuencia", "3.1x", "-0.4", "Exposición por cuenta", "#FCD34D"],
+      ];
+
+      const DEF_growthData = [42, 46, 51, 49, 58, 61, 64, 70, 68, 76, 81, 78, 86, 93, 91, 96, 104, 112, 108, 118, 124, 132, 129, 141, 148, 153, 161, 170, 178, 186];
+      const DEF_reachByFormat = [
+        ["Reels", 92, "#FBBF24"],
+        ["Carr.", 63, "#FEE9A8"],
+        ["Stories", 48, "#FDE68A"],
+        ["Ads", 36, "#FCD34D"],
+        ["Lives", 24, "#34D399"],
+      ];
+      const DEF_engagementMix = [
+        ["Likes", "54%", "#FBBF24"],
+        ["Comentarios", "19%", "#FEE9A8"],
+        ["Saves", "14%", "#FDE68A"],
+        ["Shares", "8%", "#FCD34D"],
+        ["DMs", "5%", "#F87171"],
+      ];
+      const DEF_retention = [
+        ["0-3s", 100, "#FBBF24"],
+        ["3-8s", 78, "#34D399"],
+        ["8-15s", 57, "#FEE9A8"],
+        ["15-30s", 42, "#FCD34D"],
+        ["Final", 31, "#F87171"],
+      ];
+      const DEF_funnel = [
+        ["Reach", "1.42M", 100, "#FBBF24"],
+        ["Profile visits", "96.7K", 68, "#FEE9A8"],
+        ["Bio clicks", "3.772", 42, "#FCD34D"],
+        ["DM starts", "2.184", 31, "#FDE68A"],
+        ["Agendas", "248", 18, "#34D399"],
+      ];
+      const DEF_heatmap = [
+        ["Lun", "10h", 78], ["Mar", "12h", 64], ["Mie", "15h", 86], ["Jue", "11h", 92], ["Vie", "17h", 74], ["Sab", "20h", 58], ["Dom", "19h", 69],
+        ["Lun", "18h", 71], ["Mar", "21h", 52], ["Mie", "09h", 66], ["Jue", "19h", 81], ["Vie", "12h", 88], ["Sab", "11h", 62], ["Dom", "20h", 73],
+      ];
+
+      /* ============================================================
+         ESTADO PERSISTENTE
+         Todo lo editable vive en DATA y se guarda en el navegador.
+         ============================================================ */
+      const STORE_KEY = "highway:command:v1";
+      const CFG_KEY   = "highway:command:config:v1";
+
+      const DEFAULTS = {
+        content: DEF_content,
+        sources: DEF_sources,
+        insights: DEF_insights,
+        igMetrics: DEF_igMetrics,
+        growthData: DEF_growthData,
+        reachByFormat: DEF_reachByFormat,
+        engagementMix: DEF_engagementMix,
+        retention: DEF_retention,
+        funnel: DEF_funnel,
+        heatmap: DEF_heatmap,
+      };
+
+      const clone = (v) => JSON.parse(JSON.stringify(v));
+
+      function loadData() {
+        try {
+          const raw = localStorage.getItem(STORE_KEY);
+          if (!raw) return clone(DEFAULTS);
+          const saved = JSON.parse(raw);
+          const out = clone(DEFAULTS);
+          Object.keys(DEFAULTS).forEach((k) => {
+            if (Array.isArray(saved[k])) out[k] = saved[k];
+          });
+          return out;
+        } catch (e) {
+          return clone(DEFAULTS);
+        }
+      }
+
+      function saveData() {
+        try {
+          localStorage.setItem(STORE_KEY, JSON.stringify(DATA));
+          flashSaved();
+        } catch (e) {
+          console.warn("No se pudo guardar:", e);
+        }
+      }
+
+      function resetData() {
+        DATA = clone(DEFAULTS);
+        rebindAliases();
+        saveData();
+        render();
+      }
+
+      let DATA = loadData();
+
+      /* alias que usa el resto del codigo — siempre se mutan en el lugar */
+      let content, sources, insights, igMetrics, growthData,
+          reachByFormat, engagementMix, retention, funnel, heatmap;
+
+      function rebindAliases() {
+        content       = DATA.content;
+        sources       = DATA.sources;
+        insights      = DATA.insights;
+        igMetrics     = DATA.igMetrics;
+        growthData    = DATA.growthData;
+        reachByFormat = DATA.reachByFormat;
+        engagementMix = DATA.engagementMix;
+        retention     = DATA.retention;
+        funnel        = DATA.funnel;
+        heatmap       = DATA.heatmap;
+      }
+      rebindAliases();
+
+      /* aviso breve de guardado */
+      let savedTimer = null;
+      function flashSaved() {
+        const el = document.getElementById("saveFlag");
+        if (!el) return;
+        el.classList.add("on");
+        clearTimeout(savedTimer);
+        savedTimer = setTimeout(() => el.classList.remove("on"), 1400);
+      }
+
+      /* ---------- configuracion de conectores ---------- */
+      const DEFAULT_CFG = {
+        at_token: "", at_base: "appaArbbCN5pFoOcH",
+        at_table: "Metricas Mensuales", at_period: "",
+        meta_token: "", meta_igid: "",
+      };
+      function loadCfg() {
+        try { return Object.assign({}, DEFAULT_CFG, JSON.parse(localStorage.getItem(CFG_KEY) || "{}")); }
+        catch (e) { return Object.assign({}, DEFAULT_CFG); }
+      }
+      function saveCfg() {
+        try { localStorage.setItem(CFG_KEY, JSON.stringify(CFG)); } catch (e) {}
+      }
+      let CFG = loadCfg();
+
+      const state = { view: "overview", format: "all", owner: "all", search: "" };
+      const $ = (selector) => document.querySelector(selector);
+      const $$ = (selector) => Array.from(document.querySelectorAll(selector));
+
+      /* ============================================================
+         MOTOR DE EDICION
+         ed() marca un nodo como editable; al salir del campo se guarda.
+         ============================================================ */
+      function ed(arrName, index, field) {
+        return `contenteditable="true" spellcheck="false" class="ed" data-ed="${arrName}|${index}|${field}"`;
+      }
+
+      /* plantillas para las filas nuevas */
+      const BLANKS = {
+        igMetrics: () => ["Nueva", "0", "+0%", "Descripción", "#FBBF24"],
+        insights:  () => ["Nuevo insight", "Escribí el detalle acá.", "#FBBF24"],
+        engagementMix: () => ["Nuevo", "0%", "#FBBF24"],
+        reachByFormat: () => ["Nuevo", 50, "#FBBF24"],
+        retention: () => ["Nuevo", 50, "#FBBF24"],
+        funnel:    () => ["Nuevo", "0", 50, "#FBBF24"],
+        heatmap:   () => ["Lun", "12h", 50],
+        sources:   () => ({ name: "Nueva fuente", type: "Tipo", summary: "Descripción de la fuente.", tags: ["tag"] }),
+      };
+
+      /* guardar al salir de un campo editable */
+      document.addEventListener(
+        "focusout",
+        (event) => {
+          const el = event.target.closest && event.target.closest("[data-ed]");
+          if (!el) return;
+          const [arrName, i, f] = el.dataset.ed.split("|");
+          const arr = DATA[arrName];
+          if (!arr || !arr[+i]) return;
+          const row = arr[+i];
+          const prev = row[+f];
+          let val = el.textContent.trim();
+          if (typeof prev === "number") {
+            const n = Number(String(val).replace(/[^0-9.\-]/g, ""));
+            val = Number.isFinite(n) ? n : prev;
+          }
+          if (String(val) === String(prev)) return;
+          row[+f] = val;
+          saveData();
+          render();
+        },
+        true,
+      );
+
+      /* Enter confirma, Escape cancela */
+      document.addEventListener("keydown", (event) => {
+        const el = event.target.closest && event.target.closest("[data-ed]");
+        if (!el) return;
+        if (event.key === "Enter") { event.preventDefault(); el.blur(); }
+        if (event.key === "Escape") { event.preventDefault(); render(); }
+      });
+
+      /* borrar y agregar filas */
+      document.addEventListener("click", (event) => {
+        const del = event.target.closest && event.target.closest("[data-del]");
+        if (del) {
+          const [arrName, i] = del.dataset.del.split("|");
+          if (!DATA[arrName]) return;
+          DATA[arrName].splice(+i, 1);
+          saveData();
+          render();
+          return;
+        }
+        const add = event.target.closest && event.target.closest("[data-add]");
+        if (add) {
+          const arrName = add.dataset.add;
+          if (!DATA[arrName] || !BLANKS[arrName]) return;
+          DATA[arrName].push(BLANKS[arrName]());
+          saveData();
+          render();
+        }
+      });
+
+      /* ============================================================
+         PIEZAS DE CONTENIDO — alta, edicion y baja
+         ============================================================ */
+      const BLANK_PIECE = () => ({
+        format: "Reel", status: "Idea", owner: "", day: "Lun", time: "10:00",
+        objective: "DM", hook: "", summary: "", cta: "", score: 70,
+      });
+      let editingIndex = null;
+
+      function openPieceForm(index) {
+        editingIndex = index;
+        const p = index === null ? BLANK_PIECE() : content[index];
+        const opts = (list, sel) => list.map((v) => `<option${v === sel ? " selected" : ""}>${escapeHtml(v)}</option>`).join("");
+        $("#pieceForm").innerHTML = `
+          <div class="panel-head">
+            <div>
+              <p class="eyebrow">${index === null ? "Nueva pieza" : "Editando pieza"}</p>
+              <h2>${index === null ? "Cargar contenido" : escapeHtml(p.hook || "Sin hook")}</h2>
+            </div>
+            <button class="button" type="button" id="pieceCancel">Cancelar</button>
+          </div>
+          <div class="form-grid">
+            <label>Hook<input id="pf-hook" value="${escapeHtml(p.hook)}" placeholder="La frase que frena el scroll" /></label>
+            <label>Resumen<input id="pf-summary" value="${escapeHtml(p.summary)}" placeholder="De qué va la pieza" /></label>
+            <label>Formato<select id="pf-format">${opts(["Reel", "Carrusel", "Stories", "Ad"], p.format)}</select></label>
+            <label>Estado<select id="pf-status">${opts(statuses, p.status)}</select></label>
+            <label>Responsable<input id="pf-owner" value="${escapeHtml(p.owner)}" placeholder="Nombre" /></label>
+            <label>Día<select id="pf-day">${opts(days, p.day)}</select></label>
+            <label>Hora<input id="pf-time" value="${escapeHtml(p.time)}" placeholder="10:00" /></label>
+            <label>Objetivo<input id="pf-objective" value="${escapeHtml(p.objective)}" placeholder="DM, Agenda, Venta..." /></label>
+            <label>CTA<input id="pf-cta" value="${escapeHtml(p.cta)}" placeholder="Comentá SISTEMA" /></label>
+            <label>Score<input id="pf-score" type="number" min="0" max="100" value="${p.score}" /></label>
+            <button class="button primary" type="button" id="pieceSave">${index === null ? "Agregar pieza" : "Guardar cambios"}</button>
+          </div>`;
+        $("#pieceForm").style.display = "block";
+        $("#pieceCancel").addEventListener("click", closePieceForm);
+        $("#pieceSave").addEventListener("click", savePiece);
+        $("#pf-hook").focus();
+      }
+
+      function closePieceForm() {
+        editingIndex = null;
+        $("#pieceForm").style.display = "none";
+        $("#pieceForm").innerHTML = "";
+      }
+
+      function savePiece() {
+        const piece = {
+          format: $("#pf-format").value,
+          status: $("#pf-status").value,
+          owner: $("#pf-owner").value.trim() || "Sin asignar",
+          day: $("#pf-day").value,
+          time: $("#pf-time").value.trim() || "10:00",
+          objective: $("#pf-objective").value.trim() || "DM",
+          hook: $("#pf-hook").value.trim() || "Sin hook",
+          summary: $("#pf-summary").value.trim(),
+          cta: $("#pf-cta").value.trim(),
+          score: Math.max(0, Math.min(100, Number($("#pf-score").value) || 0)),
+        };
+        if (editingIndex === null) content.push(piece);
+        else content[editingIndex] = piece;
+        saveData();
+        closePieceForm();
+        renderOwnerOptions();
+        render();
+      }
+
+      /* botones de las tarjetas de pieza */
+      document.addEventListener("click", (event) => {
+        const edit = event.target.closest && event.target.closest("[data-piece-edit]");
+        if (edit) { openPieceForm(Number(edit.dataset.pieceEdit)); return; }
+        const del = event.target.closest && event.target.closest("[data-piece-del]");
+        if (del) {
+          content.splice(Number(del.dataset.pieceDel), 1);
+          saveData();
+          renderOwnerOptions();
+          render();
+          return;
+        }
+        const nuevo = event.target.closest && event.target.closest("[data-piece-new]");
+        if (nuevo) openPieceForm(null);
+      });
+
+      /* ============================================================
+         FUENTES — alta, edicion y baja
+         ============================================================ */
+      document.addEventListener("focusout", (event) => {
+        const el = event.target.closest && event.target.closest("[data-src]");
+        if (!el) return;
+        const [i, field] = el.dataset.src.split("|");
+        const s = sources[+i];
+        if (!s) return;
+        const val = el.textContent.trim();
+        if (field === "tags") {
+          const tags = val.split(",").map((x) => x.trim()).filter(Boolean);
+          if (JSON.stringify(tags) === JSON.stringify(s.tags)) return;
+          s.tags = tags;
+        } else {
+          if (val === s[field]) return;
+          s[field] = val;
+        }
+        saveData();
+        render();
+      }, true);
+
+
+      function escapeHtml(value) {
+        return String(value)
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;")
+          .replaceAll("'", "&#039;");
+      }
+
+      function scoreColor(score) {
+        if (score >= 86) return "linear-gradient(90deg, var(--green), var(--lime))";
+        if (score >= 74) return "linear-gradient(90deg, var(--amber), var(--green))";
+        return "linear-gradient(90deg, var(--coral), var(--amber))";
+      }
+
+      function filteredContent() {
+        const term = state.search.trim().toLowerCase();
+        return content.filter((item) => {
+          const formatOk = state.format === "all" || item.format === state.format;
+          const ownerOk = state.owner === "all" || item.owner === state.owner;
+          const haystack = [item.hook, item.summary, item.cta, item.owner, item.status, item.objective]
+            .join(" ")
+            .toLowerCase();
+          const searchOk = !term || haystack.includes(term);
+          return formatOk && ownerOk && searchOk;
+        });
+      }
+
+      function postCard(item, index) {
+        const colors = palette[index % palette.length];
+        const slug = item.format.toLowerCase();
+        const real = content.indexOf(item);
+        return `
+          <article class="post-card">
+            <div class="thumb" style="--a: ${colors[0]}; --b: ${colors[1]}"></div>
+            <div class="card-body">
+              <div class="card-top">
+                <span class="badge ${slug}">${escapeHtml(item.format)}</span>
+                <span class="badge status">${escapeHtml(item.status)}</span>
+                <span class="card-tools">
+                  <button class="x-btn" data-piece-edit="${real}" title="Editar pieza">✎</button>
+                  <button class="x-btn" data-piece-del="${real}" title="Borrar pieza">✕</button>
+                </span>
+              </div>
+              <h3>${escapeHtml(item.hook)}</h3>
+              <p>${escapeHtml(item.summary)}</p>
+              <div class="meta">
+                <span>${escapeHtml(item.owner)}</span>
+                <span>${escapeHtml(item.day)} ${escapeHtml(item.time)}</span>
+                <span>${escapeHtml(item.objective)}</span>
+                <span>${escapeHtml(item.cta)}</span>
+              </div>
+              <div class="score-line">
+                <div class="meter"><span style="--score: ${item.score}%; --meter: ${scoreColor(item.score)}"></span></div>
+                <div class="score">${item.score}</div>
+              </div>
+            </div>
+          </article>
+        `;
+      }
+
+      function lineChart(values) {
+        const max = Math.max(...values);
+        const min = Math.min(...values);
+        const points = values
+          .map((value, index) => {
+            const x = (index / (values.length - 1)) * 100;
+            const y = 92 - ((value - min) / (max - min)) * 78;
+            return `${x.toFixed(2)},${y.toFixed(2)}`;
+          })
+          .join(" ");
+        return `
+          <svg viewBox="0 0 100 100" preserveAspectRatio="none" role="img" aria-label="Growth trend">
+            <defs>
+              <linearGradient id="growthStroke" x1="0" x2="1" y1="0" y2="0">
+                <stop offset="0%" stop-color="#FBBF24" />
+                <stop offset="55%" stop-color="#FEE9A8" />
+                <stop offset="100%" stop-color="#FDE68A" />
+              </linearGradient>
+              <linearGradient id="growthFill" x1="0" x2="0" y1="0" y2="1">
+                <stop offset="0%" stop-color="#FBBF24" stop-opacity="0.28" />
+                <stop offset="100%" stop-color="#FBBF24" stop-opacity="0" />
+              </linearGradient>
+            </defs>
+            <polygon points="0,100 ${points} 100,100" fill="url(#growthFill)"></polygon>
+            <polyline points="${points}" fill="none" stroke="url(#growthStroke)" stroke-width="2.8" vector-effect="non-scaling-stroke"></polyline>
+          </svg>
+        `;
+      }
+
+      function renderKpis(items) {
+        const ready = items.filter((item) => ["Aprobado", "Programado"].includes(item.status)).length;
+        const blocked = items.filter((item) => item.score < 70).length;
+        const avg = Math.round(items.reduce((sum, item) => sum + item.score, 0) / Math.max(items.length, 1));
+        const reels = items.filter((item) => item.format === "Reel").length;
+        $("#opsMetrics").innerHTML = [
+          ["Piezas activas", items.length, "Semana mock"],
+          ["Listas", ready, "Aprobadas/programadas"],
+          ["Score medio", avg, "Quality gate"],
+          ["Reels", reels, "Motor principal"],
+          ["Bloqueos", blocked, "Score bajo 70"],
+          ["Publicables hoy", 9, "Mock operativo"],
+        ]
+          .map(([label, value, detail]) => `<article class="mini-metric"><span>${label}</span><strong>${value}</strong><p>${detail}</p></article>`)
+          .join("");
+      }
+
+      function renderOverview() {
+        const items = filteredContent();
+        $("#igMetrics").innerHTML = igMetrics
+          .map(
+            ([label, value, delta, detail, color], i) => `
+              <article class="metric-card" style="--accent: ${color}">
+                <button class="x-btn" data-del="igMetrics|${i}" title="Borrar métrica">✕</button>
+                <span ${ed("igMetrics", i, 0)}>${escapeHtml(label)}</span>
+                <strong ${ed("igMetrics", i, 1)}>${escapeHtml(value)}</strong>
+                <p ${ed("igMetrics", i, 3)}>${escapeHtml(detail)}</p>
+                <div class="delta" ${ed("igMetrics", i, 2)}>${escapeHtml(delta)}</div>
+              </article>
+            `,
+          )
+          .join("") + `<button class="add-card" data-add="igMetrics">+ Métrica</button>`;
+        $("#growthChart").innerHTML = lineChart(growthData);
+        $("#engagementLegend").innerHTML = engagementMix
+          .map(
+            ([label, value, color], i) => `
+              <div class="legend-row" style="--accent: ${color}">
+                <span class="legend-dot"></span>
+                <span ${ed("engagementMix", i, 0)}>${escapeHtml(label)}</span>
+                <b ${ed("engagementMix", i, 1)}>${escapeHtml(value)}</b>
+              </div>
+            `,
+          )
+          .join("");
+        $("#formatReach").style.setProperty("--count", reachByFormat.length);
+        $("#formatReach").innerHTML = reachByFormat
+          .map(
+            ([label, value, color], i) => `
+              <div class="bar-col" style="--accent: ${color}">
+                <div class="bar-stack" title="Editá el número de abajo"><div class="bar-fill" style="height: ${value}%"></div></div>
+                <b class="bar-num" ${ed("reachByFormat", i, 1)}>${value}</b>
+                <span ${ed("reachByFormat", i, 0)}>${escapeHtml(label)}</span>
+              </div>
+            `,
+          )
+          .join("");
+        $("#retentionRows").innerHTML = retention
+          .map(
+            ([label, value, color], i) => `
+              <div class="retention-row">
+                <span ${ed("retention", i, 0)}>${escapeHtml(label)}</span>
+                <div class="meter"><span style="--score: ${value}%; --meter: linear-gradient(90deg, ${color}, rgba(255,255,255,.18))"></span></div>
+                <b><span ${ed("retention", i, 1)}>${value}</span>%</b>
+              </div>
+            `,
+          )
+          .join("");
+        $("#funnelRows").innerHTML = funnel
+          .map(
+            ([label, value, pct, color], i) => `
+              <div class="funnel-step">
+                <div><span ${ed("funnel", i, 0)}>${escapeHtml(label)}</span><b ${ed("funnel", i, 1)}>${escapeHtml(value)}</b></div>
+                <div class="meter" title="Ancho: ${pct}%"><span style="--score: ${pct}%; --meter: linear-gradient(90deg, ${color}, rgba(255,255,255,.18))"></span></div>
+              </div>
+            `,
+          )
+          .join("");
+        $("#heatmap").innerHTML = heatmap
+          .map(
+            ([day, hour, heat], i) => `
+              <div class="heat-cell" style="--heat: ${heat}">
+                <span ${ed("heatmap", i, 0)}>${escapeHtml(day)}</span>
+                <span ${ed("heatmap", i, 1)}>${escapeHtml(hour)}</span>
+                <b ${ed("heatmap", i, 2)}>${heat}</b>
+              </div>
+            `,
+          )
+          .join("");
+        renderKpis(items);
+        $("#todayList").innerHTML = items
+          .slice()
+          .sort((a, b) => b.score - a.score)
+          .slice(0, 4)
+          .map(postCard)
+          .join("") || `<div class="no-results">Sin piezas para este filtro.</div>`;
+        $("#alerts").innerHTML = items
+          .filter((item) => item.score < 75)
+          .map(
+            (item) => `
+              <div class="alert" style="--accent: ${item.score < 65 ? "var(--coral)" : "var(--amber)"}">
+                <strong>${escapeHtml(item.hook)}</strong>
+                <p>Score ${item.score}. Revisar tensión, CTA o grababilidad antes de aprobar.</p>
+              </div>
+            `,
+          )
+          .join("") || `<div class="alert" style="--accent: var(--green)"><strong>Sin rojos</strong><p>El filtro actual no tiene bloqueos fuertes.</p></div>`;
+        $("#insights").innerHTML = insights
+          .map(([title, text, color], i) => `<div class="insight" style="--accent: ${color}"><button class="x-btn" data-del="insights|${i}" title="Borrar">✕</button><strong ${ed("insights", i, 0)}>${escapeHtml(title)}</strong><p ${ed("insights", i, 1)}>${escapeHtml(text)}</p></div>`)
+          .join("") + `<button class="add-card" data-add="insights">+ Insight</button>`;
+      }
+
+      function renderBoard() {
+        const items = filteredContent();
+        $("#board").innerHTML = statuses
+          .map((status) => {
+            const laneItems = items.filter((item) => item.status === status);
+            return `
+              <section class="lane">
+                <div class="lane-head"><span>${status}</span><b>${laneItems.length}</b></div>
+                ${laneItems.map(postCard).join("") || `<div class="no-results">Vacío</div>`}
+              </section>
+            `;
+          })
+          .join("");
+      }
+
+      function renderCalendar() {
+        const items = filteredContent();
+        $("#calendarGrid").innerHTML = days
+          .map((day) => {
+            const dayItems = items.filter((item) => item.day === day);
+            return `
+              <section class="day">
+                <strong>${day}</strong>
+                ${dayItems
+                  .map(
+                    (item) => `
+                      <div class="calendar-item">
+                        <span>${escapeHtml(item.time)} · ${escapeHtml(item.format)}</span>
+                        <p>${escapeHtml(item.hook)}</p>
+                      </div>
+                    `,
+                  )
+                  .join("")}
+              </section>
+            `;
+          })
+          .join("");
+      }
+
+      function renderSources() {
+        $("#sourcesGrid").innerHTML = sources
+          .map(
+            (source, index) => `
+              <article class="source-card">
+                <button class="x-btn" data-del="sources|${index}" title="Borrar fuente">✕</button>
+                <p class="eyebrow" contenteditable="true" spellcheck="false" data-src="${index}|type">${escapeHtml(source.type)}</p>
+                <h3 contenteditable="true" spellcheck="false" data-src="${index}|name">${escapeHtml(source.name)}</h3>
+                <p contenteditable="true" spellcheck="false" data-src="${index}|summary">${escapeHtml(source.summary)}</p>
+                <div class="tags-edit" contenteditable="true" spellcheck="false" data-src="${index}|tags"
+                     title="Separá las etiquetas con comas">${escapeHtml(source.tags.join(", "))}</div>
+              </article>
+            `,
+          )
+          .join("") + `<button class="add-card tall" data-add="sources">+ Nueva fuente</button>`;
+      }
+
+      function generatorText() {
+        const source = $("#sourceSelect").value || "YouTube Rami";
+        const format = $("#formatSelect").value || "Reel";
+        const objective = $("#objectiveSelect").value || "DM";
+        const edge = Number($("#edge").value || 4);
+        const tone = edge >= 4 ? "sin anestesia" : "directo pero más didáctico";
+        const score = 70 + edge * 5;
+        $("#scoreBadge").textContent = `Score ${score}`;
+        return `
+          <h3>Tu contenido no vende porque no hace elegir.</h3>
+          <p><strong>Fuente:</strong> ${escapeHtml(source)} · <strong>Formato:</strong> ${escapeHtml(format)} · <strong>Objetivo:</strong> ${escapeHtml(objective)} · <strong>Tono:</strong> ${tone}.</p>
+          <ol>
+            <li><strong>Hook:</strong> Si tu contenido no incomoda a nadie, probablemente tampoco mueve a nadie.</li>
+            <li><strong>Diagnóstico:</strong> estás explicando demasiado y tensionando muy poco.</li>
+            <li><strong>Reframe:</strong> el contenido no existe para demostrar que sabés. Existe para que el lead se mire al espejo.</li>
+            <li><strong>Prueba:</strong> cada objeción real que atacás vuelve el DM más natural.</li>
+            <li><strong>CTA:</strong> comentá SISTEMA y te muestro dónde se está perdiendo la conversación.</li>
+          </ol>
+        `;
+      }
+
+      function renderGenerator() {
+        $("#sourceSelect").innerHTML = sources.map((source) => `<option>${escapeHtml(source.name)}</option>`).join("");
+        $("#output").innerHTML = generatorText();
+      }
+
+      function renderOwnerOptions() {
+        const owners = [...new Set(content.map((item) => item.owner))].sort();
+        $("#owner").innerHTML = `<option value="all">Todos</option>${owners.map((owner) => `<option>${escapeHtml(owner)}</option>`).join("")}`;
+      }
+
+      /* ============================================================
+         CONECTORES
+         ============================================================ */
+      function connStatus(id, msg, kind) {
+        const el = $(id);
+        if (!el) return;
+        el.textContent = msg;
+        el.className = "conn-status" + (kind ? " " + kind : "");
+      }
+      function setDot(id, on) {
+        const el = $(id);
+        if (el) el.classList.toggle("on", !!on);
+      }
+
+      /* ---------- AIRTABLE ---------- */
+      function atFields() {
+        CFG.at_token  = $("#at-token").value.trim();
+        CFG.at_base   = $("#at-base").value.trim();
+        CFG.at_table  = $("#at-table").value.trim();
+        CFG.at_period = $("#at-period").value.trim();
+        saveCfg();
+      }
+
+      /* Hay dos caminos para leer Airtable:
+         1. La conexión que ya tenés hecha en Claude (no pide token). Es la que se
+            usa cuando el dashboard corre dentro de la app, donde el panel bloquea
+            las llamadas directas a internet.
+         2. El token personal, para cuando abrís el archivo suelto en el navegador.
+         Los dos devuelven la misma forma: { records: [ { id, fields: {nombre: valor} } ] } */
+
+      function mcpDisponible() {
+        return !!(window.cowork && typeof window.cowork.callMcpTool === "function");
+      }
+
+      async function mcpCall(tool, args) {
+        const r = await window.cowork.callMcpTool(tool, args);
+        if (!r || r.isError) {
+          const detalle = r && r.content && r.content[0] ? r.content[0].text : "sin detalle";
+          throw new Error("Airtable respondió con un error: " + detalle);
+        }
+        if (r.structuredContent) return r.structuredContent;
+        return JSON.parse(r.content[0].text);
+      }
+
+      let AT_TABLAS = null; /* cache del esquema, para no pedirlo en cada sync */
+
+      async function atFetchMcp() {
+        if (!AT_TABLAS) {
+          const esquema = await mcpCall("mcp__8cd3157e-38ba-4514-8594-75e389d2b66e__list_tables_for_base",
+            { baseId: CFG.at_base });
+          AT_TABLAS = esquema.tables || [];
+        }
+        const buscado = CFG.at_table.toLowerCase();
+        const tabla = AT_TABLAS.find(
+          (t) => t.name.toLowerCase() === buscado || t.id === CFG.at_table
+        );
+        if (!tabla) {
+          throw new Error(
+            'No encontré la tabla "' + CFG.at_table + '". En esta base hay: ' +
+            AT_TABLAS.map((t) => t.name).join(", ") + "."
+          );
+        }
+        /* el conector devuelve los valores por ID de campo, asi que armamos
+           el diccionario ID -> nombre a partir del esquema de la tabla */
+        const nombre = {};
+        (tabla.fields || []).forEach((f) => { nombre[f.id] = f.name; });
+
+        const data = await mcpCall("mcp__8cd3157e-38ba-4514-8594-75e389d2b66e__list_records_for_table",
+          { baseId: CFG.at_base, tableId: tabla.id, pageSize: 100 });
+
+        const records = (data.records || []).map((r) => {
+          const crudo = r.cellValuesByFieldId || {};
+          const fields = {};
+          Object.keys(crudo).forEach((id) => { fields[nombre[id] || id] = crudo[id]; });
+          return { id: r.id, fields: fields };
+        });
+        return { records: records, via: "conexión de Claude" };
+      }
+
+      async function atFetchToken(extraQuery) {
+        /* Un token completo es "pat" + id + "." + secreto (unos 80 caracteres).
+           El error mas comun es copiar solo la parte de antes del punto. */
+        const t = CFG.at_token;
+        if (!t) throw new Error("Falta el token.");
+        if (t.indexOf(".") === -1 || t.length < 50) {
+          throw new Error(
+            "El token parece incompleto (" + t.length + " caracteres). " +
+            "Uno completo lleva un punto en el medio y ronda los 80. " +
+            "Copiá el valor entero que te muestra Airtable al crearlo."
+          );
+        }
+        if (t.slice(0, 3) !== "pat") {
+          throw new Error('El token deberia empezar con "pat". Revisá que hayas copiado el correcto.');
+        }
+        const url =
+          "https://api.airtable.com/v0/" + CFG.at_base + "/" +
+          encodeURIComponent(CFG.at_table) + "?pageSize=100" + (extraQuery || "");
+        let res;
+        try {
+          res = await fetch(url, { headers: { Authorization: "Bearer " + t } });
+        } catch (e) {
+          throw new Error(
+            "No se pudo salir a internet desde acá. Si estás viendo el dashboard " +
+            "dentro de Claude, el panel bloquea las llamadas directas: usá la " +
+            "conexión de Airtable de Claude en vez del token."
+          );
+        }
+        if (res.status === 401) throw new Error("Token inválido o vencido. Generá uno nuevo en airtable.com/create/tokens.");
+        if (res.status === 403) throw new Error("El token es válido pero no tiene acceso a esta base. Editálo en Airtable y agregá la base en la sección Access, con el scope data.records:read.");
+        if (res.status === 404) throw new Error("No existe esa base o esa tabla. Revisá el Base ID y el nombre.");
+        if (res.status === 422) throw new Error("Airtable rechazó la consulta. Revisá el nombre exacto de la tabla.");
+        if (res.status === 429) throw new Error("Demasiadas consultas seguidas. Esperá unos segundos y probá de nuevo.");
+        if (!res.ok) throw new Error("Airtable respondió " + res.status + ".");
+        const data = await res.json();
+        return { records: data.records || [], via: "token" };
+      }
+
+      async function atFetch(extraQuery) {
+        atFields();
+        if (!CFG.at_base)  throw new Error("Falta el Base ID.");
+        if (!CFG.at_table) throw new Error("Falta el nombre de la tabla.");
+        if (mcpDisponible()) return atFetchMcp();
+        return atFetchToken(extraQuery);
+      }
+
+      async function atTest() {
+        connStatus("#at-status", "Probando…", "");
+        try {
+          const data = await atFetch("");
+          setDot("#atDot", true);
+          const campos = data.records && data.records[0] ? Object.keys(data.records[0].fields) : [];
+          connStatus("#at-status",
+            "Conectado por " + data.via + ". " +
+            (data.records ? data.records.length : 0) + " filas leídas." +
+            (campos.length ? " Campos: " + campos.join(", ") : ""), "ok");
+        } catch (e) {
+          setDot("#atDot", false);
+          connStatus("#at-status", e.message, "err");
+        }
+      }
+
+      /* nombres de campo tolerantes: acepta variantes de mayusculas y acentos */
+      function pick(fields, names) {
+        const keys = Object.keys(fields);
+        for (const n of names) {
+          const hit = keys.find((k) => k.toLowerCase().trim() === n.toLowerCase());
+          if (hit && fields[hit] != null) return fields[hit];
+        }
+        return null;
+      }
+
+      async function atSync() {
+        connStatus("#at-status", "Trayendo…", "");
+        try {
+          const per = $("#at-period").value.trim();
+          /* traemos todo y filtramos aca: cada tabla tiene campos distintos
+             (Mes / Semana / Periodo) y una formula con un campo inexistente falla */
+          const data = await atFetch("");
+          let recs = data.records || [];
+          if (per) {
+            const objetivo = per.toLowerCase();
+            recs = recs.filter((r) => {
+              const f = r.fields;
+              return ["Mes", "Semana", "Periodo"].some((k) => {
+                const v = f[k];
+                return typeof v === "string" && v.toLowerCase().includes(objetivo);
+              });
+            });
+          }
+          if (!recs.length) {
+            setDot("#atDot", true);
+            connStatus("#at-status",
+              per
+                ? 'No hay filas que coincidan con "' + per + '" en ' + CFG.at_table +
+                  ". Revisá que el periodo esté escrito igual que en la tabla."
+                : "La tabla está vacía.", "err");
+            return;
+          }
+
+          /* sumamos todas las plataformas del periodo */
+          const tot = { vistas: 0, seguidores: 0, megusta: 0, compartidos: 0, guardados: 0, comentarios: 0, videos: 0 };
+          const mapa = new Map();
+          recs.forEach((r) => {
+            const f = r.fields;
+            const v = {
+              vistas:      Number(pick(f, ["Vistas", "Views"])) || 0,
+              seguidores:  Number(pick(f, ["Seguidores", "Followers"])) || 0,
+              megusta:     Number(pick(f, ["Me gusta", "Likes"])) || 0,
+              compartidos: Number(pick(f, ["Compartidos", "Shares"])) || 0,
+              guardados:   Number(pick(f, ["Guardados", "Saves"])) || 0,
+              comentarios: Number(pick(f, ["Comentarios", "Comments"])) || 0,
+              videos:      Number(pick(f, ["Videos publicados", "Videos"])) || 0,
+            };
+            Object.keys(tot).forEach((k) => (tot[k] += v[k]));
+
+            const plat = pick(f, ["Plataforma", "Platform"]);
+            const nombre = plat && plat.name ? plat.name : plat;
+            if (!nombre) return;
+            /* una misma plataforma puede venir en varias filas del periodo
+               (por ejemplo varias semanas): las sumamos en vez de repetirlas */
+            const key = String(nombre);
+            if (!mapa.has(key)) mapa.set(key, { vistas: 0, seguidores: 0, megusta: 0, compartidos: 0, guardados: 0, comentarios: 0, videos: 0 });
+            const acc = mapa.get(key);
+            Object.keys(acc).forEach((k) => (acc[k] += v[k]));
+          });
+          const porPlat = [...mapa.entries()].sort((a, b) => b[1].vistas - a[1].vistas);
+
+          const inter = tot.megusta + tot.compartidos + tot.guardados + tot.comentarios;
+          const er = tot.vistas ? ((inter / tot.vistas) * 100).toFixed(2) + "%" : "0%";
+          const n = (x) => Number(x).toLocaleString("es-ES");
+
+          /* reescribimos las metricas principales */
+          const nuevas = [
+            ["Vistas", n(tot.vistas), "", "Total del periodo", "#FBBF24"],
+            ["Seguidores", n(tot.seguidores), "", "Suma de plataformas", "#34D399"],
+            ["Interacción", er, "", "Interacciones ÷ vistas", "#FDE68A"],
+            ["Me gusta", n(tot.megusta), "", "Del periodo", "#FEE9A8"],
+            ["Comentarios", n(tot.comentarios), "", "Señal de conversación", "#FCD34D"],
+            ["Guardados", n(tot.guardados), "", "Contenido de alta utilidad", "#E8940C"],
+            ["Compartidos", n(tot.compartidos), "", "Contenido reenviable", "#FBBF24"],
+            ["Videos publicados", n(tot.videos), "", "Piezas del periodo", "#F87171"],
+          ];
+          porPlat.forEach(([nombre, v]) => {
+            nuevas.push([nombre, n(v.vistas), "", "Vistas · " + n(v.seguidores) + " seguidores", "#FEE9A8"]);
+          });
+
+          DATA.igMetrics.length = 0;
+          nuevas.forEach((m) => DATA.igMetrics.push(m));
+
+          /* alcance por plataforma para el grafico de barras */
+          if (porPlat.length) {
+            const max = Math.max(...porPlat.map(([, v]) => v.vistas), 1);
+            DATA.reachByFormat.length = 0;
+            const cols = ["#FBBF24", "#FEE9A8", "#FDE68A", "#FCD34D", "#34D399"];
+            porPlat.forEach(([nombre, v], i) => {
+              DATA.reachByFormat.push([nombre.slice(0, 9), Math.round((v.vistas / max) * 100), cols[i % cols.length]]);
+            });
+          }
+
+          /* mix de interacciones */
+          if (inter > 0) {
+            const pc = (x) => Math.round((x / inter) * 100) + "%";
+            DATA.engagementMix.length = 0;
+            [["Me gusta", tot.megusta, "#FBBF24"], ["Comentarios", tot.comentarios, "#FEE9A8"],
+             ["Guardados", tot.guardados, "#FDE68A"], ["Compartidos", tot.compartidos, "#FCD34D"]]
+              .forEach(([l, val, c]) => DATA.engagementMix.push([l, pc(val), c]));
+          }
+
+          saveData();
+          setDot("#atDot", true);
+          connStatus("#at-status",
+            "Listo. " + recs.length + " fila(s) de " + CFG.at_table +
+            (per ? ' para "' + per + '"' : "") + ". Métricas actualizadas.", "ok");
+          setView("overview");
+        } catch (e) {
+          setDot("#atDot", false);
+          connStatus("#at-status", e.message, "err");
+        }
+      }
+
+      /* ---------- META / INSTAGRAM ---------- */
+      const IG_API = "https://graph.facebook.com/v21.0/";
+
+      function igFields() {
+        CFG.meta_igid = $("#ig-id").value.trim();
+        CFG.meta_token = $("#ig-token").value.trim();
+        saveCfg();
+      }
+
+      async function igCall(path, params) {
+        igFields();
+        if (!CFG.meta_igid) throw new Error("Falta el IG Business Account ID.");
+        if (!CFG.meta_token) throw new Error("Falta el access token.");
+        const qs = new URLSearchParams(Object.assign({ access_token: CFG.meta_token }, params || {}));
+        let res;
+        try {
+          res = await fetch(IG_API + path + "?" + qs.toString());
+        } catch (e) {
+          throw new Error("No se pudo llegar a Meta (bloqueo de red o CORS). Probá la vía Zapier + Airtable.");
+        }
+        const json = await res.json();
+        if (json.error) throw new Error("Meta: " + json.error.message);
+        return json;
+      }
+
+      async function igTest() {
+        connStatus("#ig-status", "Probando…", "");
+        try {
+          const me = await igCall(CFG.meta_igid, { fields: "username,followers_count,media_count" });
+          setDot("#igDot", true);
+          connStatus("#ig-status",
+            "Conectado a @" + (me.username || "?") + " · " +
+            Number(me.followers_count || 0).toLocaleString("es-ES") + " seguidores · " +
+            (me.media_count || 0) + " publicaciones.", "ok");
+        } catch (e) {
+          setDot("#igDot", false);
+          connStatus("#ig-status", e.message, "err");
+        }
+      }
+
+      async function igSync() {
+        connStatus("#ig-status", "Trayendo…", "");
+        try {
+          const perfil = await igCall(CFG.meta_igid, { fields: "username,followers_count,media_count" });
+          let ins = { data: [] };
+          try {
+            ins = await igCall(CFG.meta_igid + "/insights", {
+              metric: "reach,impressions,profile_views",
+              period: "days_28",
+            });
+          } catch (e) { /* las insights pueden faltar segun permisos */ }
+
+          const val = (name) => {
+            const m = (ins.data || []).find((d) => d.name === name);
+            if (!m || !m.values || !m.values.length) return null;
+            return m.values[m.values.length - 1].value;
+          };
+          const n = (x) => Number(x || 0).toLocaleString("es-ES");
+
+          const nuevas = [
+            ["Seguidores", n(perfil.followers_count), "", "@" + (perfil.username || ""), "#34D399"],
+            ["Publicaciones", n(perfil.media_count), "", "Total en la cuenta", "#FBBF24"],
+          ];
+          if (val("reach") != null)         nuevas.push(["Reach", n(val("reach")), "", "Cuentas alcanzadas · 28d", "#FEE9A8"]);
+          if (val("impressions") != null)   nuevas.push(["Impresiones", n(val("impressions")), "", "Últimos 28 días", "#FDE68A"]);
+          if (val("profile_views") != null) nuevas.push(["Visitas al perfil", n(val("profile_views")), "", "Últimos 28 días", "#FCD34D"]);
+
+          DATA.igMetrics.length = 0;
+          nuevas.forEach((m) => DATA.igMetrics.push(m));
+          saveData();
+          setDot("#igDot", true);
+          connStatus("#ig-status",
+            "Listo. Métricas de @" + (perfil.username || "?") + " cargadas" +
+            ((ins.data || []).length ? "." : " (sin insights: revisá los permisos)."), "ok");
+          setView("overview");
+        } catch (e) {
+          setDot("#igDot", false);
+          connStatus("#ig-status", e.message, "err");
+        }
+      }
+
+      /* avisa por que via va a leer Airtable, para que no busques un token de mas */
+      function pintarModoAirtable() {
+        const caja = $("#at-modo");
+        const label = $("#at-token-label");
+        if (!caja) return;
+        if (mcpDisponible()) {
+          caja.className = "conn-note ready";
+          caja.innerHTML =
+            "<strong>Conectado por Claude.</strong> Uso la conexión de Airtable que ya " +
+            "tenés hecha, así que no hace falta token. Dejá ese campo vacío.";
+          if (label) label.style.display = "none";
+        } else {
+          caja.className = "conn-note manual";
+          caja.textContent =
+            "Estás viendo el archivo suelto, fuera de Claude. Acá sí hace falta el token personal.";
+          if (label) label.style.display = "";
+        }
+      }
+
+      /* precarga de los campos guardados */
+      function fillCfgInputs() {
+        pintarModoAirtable();
+        const set = (id, v) => { const el = $(id); if (el) el.value = v || ""; };
+        set("#at-token", CFG.at_token);
+        set("#at-base", CFG.at_base);
+        set("#at-table", CFG.at_table);
+        set("#at-period", CFG.at_period);
+        set("#ig-id", CFG.meta_igid);
+        set("#ig-token", CFG.meta_token);
+        setDot("#atDot", !!CFG.at_token);
+        setDot("#igDot", !!CFG.meta_token);
+      }
+
+      function setView(view) {
+        state.view = view;
+        $$(".view").forEach((section) => section.classList.toggle("active", section.id === view));
+        $$(".nav button").forEach((button) => button.classList.toggle("active", button.dataset.view === view));
+        render();
+      }
+
+      function render() {
+        if (state.view === "overview") renderOverview();
+        if (state.view === "pipeline") renderBoard();
+        if (state.view === "calendar") renderCalendar();
+        if (state.view === "sources") renderSources();
+        if (state.view === "generator") renderGenerator();
+      }
+
+      $$(".nav button").forEach((button) => button.addEventListener("click", () => setView(button.dataset.view)));
+      $$("[data-jump]").forEach((button) => button.addEventListener("click", () => setView(button.dataset.jump)));
+      $("#formatFilters").addEventListener("click", (event) => {
+        const button = event.target.closest("button");
+        if (!button) return;
+        state.format = button.dataset.format;
+        $$("#formatFilters button").forEach((item) => item.classList.toggle("active", item === button));
+        render();
+      });
+      $("#search").addEventListener("input", (event) => {
+        state.search = event.target.value;
+        render();
+      });
+      $("#owner").addEventListener("change", (event) => {
+        state.owner = event.target.value;
+        render();
+      });
+      $("#reset").addEventListener("click", () => {
+        state.format = "all";
+        state.owner = "all";
+        state.search = "";
+        $("#search").value = "";
+        $("#owner").value = "all";
+        $$("#formatFilters button").forEach((button) => button.classList.toggle("active", button.dataset.format === "all"));
+        render();
+      });
+      $("#generatorForm").addEventListener("submit", (event) => {
+        event.preventDefault();
+        $("#output").innerHTML = generatorText();
+      });
+
+      /* ---------- listeners de conectores ---------- */
+      $("#at-sync").addEventListener("click", atSync);
+      $("#at-test").addEventListener("click", atTest);
+      $("#ig-sync").addEventListener("click", igSync);
+      $("#ig-test").addEventListener("click", igTest);
+      ["#at-token", "#at-base", "#at-table", "#at-period"].forEach((id) =>
+        $(id).addEventListener("change", atFields));
+      ["#ig-id", "#ig-token"].forEach((id) => $(id).addEventListener("change", igFields));
+
+      $("#resetAll").addEventListener("click", () => {
+        if (confirm("¿Volver a los datos de ejemplo? Se pierde todo lo que hayas cargado en este navegador.")) resetData();
+      });
+
+      /* ---------- arranque ---------- */
+      fillCfgInputs();
+      renderOwnerOptions();
+      renderOverview();
+</script>
+</body>
+</html>
